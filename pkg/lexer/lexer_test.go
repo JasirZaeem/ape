@@ -47,7 +47,6 @@ let result = add(five, ten);
 		{token.IDENT, "y"},
 		{token.SEMICOLON, ";"},
 		{token.RBRACE, "}"},
-		{token.SEMICOLON, ";"},
 		{token.LET, "let"},
 		{token.IDENT, "result"},
 		{token.ASSIGN, "="},
@@ -67,12 +66,12 @@ let result = add(five, ten);
 		tok := l.NextToken()
 
 		if tok.Type != tt.expectedType {
-			t.Errorf("tests[%d] - incorrect token type. Expected=%q, got=%q",
+			t.Errorf("tests[%d] - incorrect token type. Expected = %q, got = %q",
 				i, tt.expectedType, tok.Type)
 		}
 
 		if tok.Literal != tt.expectedLiteral {
-			t.Errorf("tests[%d] - incorrect token literal. Expected=%q, got=%q",
+			t.Errorf("tests[%d] - incorrect token literal. Expected = %q, got= %q",
 				i, tt.expectedLiteral, tok.Literal)
 		}
 	}
