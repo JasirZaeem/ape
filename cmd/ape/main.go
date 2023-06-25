@@ -9,13 +9,13 @@ import (
 )
 
 func main() {
-	user, err := user.Current()
+	currentUser, err := user.Current()
 	if err != nil {
 		panic(err)
 	}
 
 	fmt.Printf("Hello %s! This is the Monkey programming language!\n",
-		user.Username)
+		currentUser.Username)
 
 	fmt.Printf("Type in commands\n")
 	repl.Start(os.Stdin, os.Stdout)
