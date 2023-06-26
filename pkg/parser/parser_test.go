@@ -8,7 +8,7 @@ import (
 	"github.com/JasirZaeem/ape/pkg/parser"
 )
 
-func TestLetStatments(t *testing.T) {
+func TestLetStatements(t *testing.T) {
 	input := `
 let x = 5;
 let y = 10;
