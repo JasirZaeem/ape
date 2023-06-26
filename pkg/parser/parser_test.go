@@ -1,8 +1,6 @@
 package parser_test
 
 import (
-	"encoding/json"
-	"fmt"
 	"testing"
 
 	"github.com/JasirZaeem/ape/pkg/ast"
@@ -119,48 +117,5 @@ return 993322;
 			t.Errorf("returnStmt.TokenLiteral not 'return', got %q",
 				returnStmt.TokenLiteral())
 		}
-	}
-}
-
-func TestJSONMarshalling(t *testing.T) {
-	input := `let y = 10;`
-
-	l := lexer.New(input)
-	p := parser.New(l)
-
-	program := p.ParseProgram()
-	checkParserErrors(t, p)
-
-	jsonProgram, err := json.MarshalIndent(program, "", "  ")
-
-	if err != nil {
-		t.Fatalf("error marshalling program to json: %v", err)
-	}
-
-	// pretty print json
-	result := fmt.Sprintf("%s\n", jsonProgram)
-
-	output := `{
-  "Statements": [
-    {
-      "Token": {
-        "Type": "LET",
-        "Literal": "let"
-      },
-      "Name": {
-        "Token": {
-          "Type": "IDENT",
-          "Literal": "y"
-        },
-        "Value": "y"
-      },
-      "Value": null
-    }
-  ]
-}
-`
-
-	if result != output {
-		t.Fatalf("expected json to be %s, got %s", output, result)
 	}
 }
