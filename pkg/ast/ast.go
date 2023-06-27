@@ -152,7 +152,9 @@ func (ie *InfixExpression) String() string {
 
 	out.WriteByte('(')
 	out.WriteString(ie.Left.String())
+	out.WriteByte(' ')
 	out.WriteString(ie.Operator)
+	out.WriteByte(' ')
 	out.WriteString(ie.Right.String())
 	out.WriteByte(')')
 
