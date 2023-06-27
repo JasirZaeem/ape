@@ -3,10 +3,10 @@ package repl
 import (
 	"bufio"
 	"fmt"
+	"github.com/JasirZaeem/ape/pkg/parser"
 	"io"
 
 	"github.com/JasirZaeem/ape/pkg/lexer"
-	"github.com/JasirZaeem/ape/pkg/token"
 )
 
 const PROMPT = ">> "
@@ -23,9 +23,22 @@ func Start(in io.Reader, out io.Writer) {
 
 		line := scanner.Text()
 		l := lexer.New(line)
+		p := parser.New(l)
 
-		for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
-			fmt.Fprintf(out, "%+v\n", tok)
+		program := p.ParseProgram()
+		if len(p.Errors()) != 0 {
+			printParserErrors(out, p.Errors())
+			continue
 		}
+
+		io.WriteString(out, program.String())
+		io.WriteString(out, "\n")
+	}
+}
+
+func printParserErrors(out io.Writer, errors []string) {
+	io.WriteString(out, " parser errors:\n")
+	for _, msg := range errors {
+		io.WriteString(out, "\t"+msg+"\n")
 	}
 }
