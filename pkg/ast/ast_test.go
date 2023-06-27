@@ -72,7 +72,13 @@ func TestJSONMarshalling(t *testing.T) {
         },
         "Value": "y"
       },
-      "Value": null
+      "Value": {
+        "Token": {
+          "Type": "INT",
+          "Literal": "10"
+        },
+        "Value": 10
+      }
     }
   ]
 }
