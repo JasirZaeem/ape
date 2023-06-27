@@ -5,6 +5,7 @@ import (
 	"github.com/JasirZaeem/ape/pkg/ast"
 	"github.com/JasirZaeem/ape/pkg/lexer"
 	"github.com/JasirZaeem/ape/pkg/token"
+	"strconv"
 )
 
 type (
@@ -39,6 +40,7 @@ func New(l *lexer.Lexer) *Parser {
 
 	p.prefixParseFns = map[token.TokenType]prefixParseFn{}
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
+	p.registerPrefix(token.INT, p.parseIntegerLiteral)
 
 	// Populate current token and peek token
 	p.nextToken()
@@ -148,6 +150,16 @@ func (p *Parser) parseIdentifier() ast.Expression {
 		Token: p.curToken,
 		Value: p.curToken.Literal,
 	}
+}
+
+func (p *Parser) parseIntegerLiteral() ast.Expression {
+	value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
+	if err != nil {
+		p.errors = append(p.errors, fmt.Sprintf("cout not parse %q as integer", p.curToken.Literal))
+		return nil
+	}
+
+	return &ast.IntegerLiteral{Token: p.curToken, Value: value}
 }
 
 func (p *Parser) curTokenIs(t token.TokenType) bool {
