@@ -56,6 +56,12 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		env.Set(node.Name.Value, val)
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
+	case *ast.FunctionLiteral:
+		return &object.Function{
+			Parameters: node.Parameters,
+			Body:       node.Body,
+			Env:        env,
+		}
 	}
 
 	return nil
