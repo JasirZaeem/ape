@@ -55,6 +55,22 @@ func testNullObject(t *testing.T, obj object.Object) bool {
 	return true
 }
 
+func testObject(t *testing.T, obj object.Object, expected interface{}) bool {
+	switch expected := expected.(type) {
+	case int:
+		return testIntegerObject(t, obj, int64(expected))
+	case int64:
+		return testIntegerObject(t, obj, expected)
+	case bool:
+		return testBooleanObject(t, obj, expected)
+	case nil:
+		return testNullObject(t, obj)
+	default:
+		t.Errorf("type of object not handled. got = %T", obj)
+		return false
+	}
+}
+
 func TestEvalIntegerExpression(t *testing.T) {
 	tests := []struct {
 		input    string
@@ -173,5 +189,24 @@ func TestIfElseExpression(t *testing.T) {
 		default:
 			testNullObject(t, evaluated)
 		}
+	}
+}
+
+func TestReturnStatements(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected interface{}
+	}{
+		{"return 10;", 10},
+		{"return 10; 9;", 10},
+		{"return 2 * 5; 9;", 10},
+		{"9; return 2 * 5; 9;", 10},
+		{"return false; true;", false},
+		{"if (10 > 1) { if (10 > 1) { return 10; } return 1; }", 10},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		testObject(t, evaluated, tt.expected)
 	}
 }
