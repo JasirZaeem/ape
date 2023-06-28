@@ -5,9 +5,10 @@ import "strconv"
 type ObjectType string
 
 const (
-	INTEGER_OBJ = "INTEGER"
-	BOOLEAN_OBJ = "BOOLEAN"
-	NULL_OBJ    = "NULL"
+	INTEGER_OBJ  = "INTEGER"
+	BOOLEAN_OBJ  = "BOOLEAN"
+	NULL_OBJ     = "NULL"
+	RETURN_VALUE = "RETURN_VALUE"
 )
 
 type Object interface {
@@ -33,3 +34,10 @@ type Null struct{}
 
 func (n *Null) Type() ObjectType { return NULL_OBJ }
 func (n *Null) Inspect() string  { return "null" }
+
+type ReturnValue struct {
+	Value Object
+}
+
+func (rv *ReturnValue) Type() ObjectType { return RETURN_VALUE }
+func (rv *ReturnValue) Inspect() string  { return rv.Value.Inspect() }
