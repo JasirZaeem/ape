@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/JasirZaeem/ape/evaluator"
+	"github.com/JasirZaeem/ape/object"
 	"github.com/JasirZaeem/ape/pkg/parser"
 	"io"
 
@@ -32,7 +33,8 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		evaluated := evaluator.Eval(program)
+		env := object.NewEnvironment()
+		evaluated := evaluator.Eval(program, env)
 		if evaluated != nil {
 			io.WriteString(out, evaluated.Inspect())
 			io.WriteString(out, "\n")
