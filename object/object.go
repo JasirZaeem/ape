@@ -32,4 +32,4 @@ func (b *Boolean) Inspect() string  { return strconv.FormatBool(b.Value) }
 type Null struct{}
 
 func (n *Null) Type() ObjectType { return NULL_OBJ }
-func (n *Null) string() string   { return "null" }
+func (n *Null) Inspect() string  { return "null" }
