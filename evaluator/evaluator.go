@@ -61,16 +61,7 @@ func evalPrefixOperatorExpression(operator string, right object.Object) object.O
 }
 
 func evalBangOperatorExpression(right object.Object) object.Object {
-	switch right {
-	case TRUE:
-		return FALSE
-	case FALSE:
-		return TRUE
-	case NULL:
-		return FALSE
-	default:
-		return FALSE
-	}
+	return nativeBoolToBooleanObject(!isTruthy(right))
 }
 
 func evalMinusOperatorExpression(right object.Object) object.Object {
@@ -118,4 +109,16 @@ func evalIntegerInfixExpression(operator string, left, right object.Object) obje
 	default:
 		return NULL
 	}
+}
+
+func isTruthy(obj object.Object) bool {
+	if obj == NULL || obj == FALSE {
+		return false
+	}
+
+	if integer, ok := obj.(*object.Integer); ok && integer.Value == 0 {
+		return false
+	}
+
+	return true
 }
