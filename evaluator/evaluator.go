@@ -30,7 +30,7 @@ func Eval(node ast.Node) object.Object {
 		return evalInfixOperatorExpression(node.Operator, left, right)
 	}
 
-	return NULL
+	return nil
 }
 func evalStatements(stmts []ast.Statement) object.Object {
 	var result object.Object
