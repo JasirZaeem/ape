@@ -1,6 +1,9 @@
 package lexer
 
-import "github.com/JasirZaeem/ape/pkg/token"
+import (
+	"bytes"
+	"github.com/JasirZaeem/ape/pkg/token"
+)
 
 type Lexer struct {
 	input        string
@@ -84,6 +87,9 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.LBRACE, l.ch)
 	case '}':
 		tok = newToken(token.RBRACE, l.ch)
+	case '"':
+		tok.Type = token.STRING
+		tok.Literal = l.readString()
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
@@ -134,4 +140,34 @@ func (l *Lexer) skipWhitespace() {
 	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
 		l.readChar()
 	}
+}
+
+func (l *Lexer) readString() string {
+	var out bytes.Buffer
+
+	l.readChar() // skip the opening "
+
+	for l.ch != '"' && l.ch != 0 {
+		if l.ch == '\\' {
+			l.readChar()
+			switch l.ch {
+			case 'n':
+				out.WriteByte('\n')
+			case 't':
+				out.WriteByte('\t')
+			case '"':
+				out.WriteByte('"')
+			case '\\':
+				out.WriteByte('\\')
+			default:
+				out.WriteByte('\\')
+				out.WriteByte(l.ch)
+			}
+		} else {
+			out.WriteByte(l.ch)
+		}
+		l.readChar()
+	}
+
+	return out.String()
 }
