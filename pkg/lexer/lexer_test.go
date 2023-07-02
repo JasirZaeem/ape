@@ -34,6 +34,7 @@ bar"
 "foo\"bar"
 "foo\\bar"
 "foo\nbar"
+[1, 2];
 `
 
 	tests := []struct {
@@ -119,6 +120,12 @@ bar"
 		{token.STRING, "foo\"bar"},
 		{token.STRING, "foo\\bar"},
 		{token.STRING, "foo\nbar"},
+		{token.LBRACKET, "["},
+		{token.INT, "1"},
+		{token.COMMA, ","},
+		{token.INT, "2"},
+		{token.RBRACKET, "]"},
+		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}
 
