@@ -2,6 +2,7 @@ package parser_test
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"testing"
 
@@ -245,10 +246,26 @@ func testIntegerLiteral(t *testing.T, il ast.Expression, value int64) bool {
 
 	if integer.Value != value {
 		t.Errorf("integer.Value not %d. got = %d", value, integer.Value)
+		return false
 	}
 
 	if integer.TokenLiteral() != fmt.Sprintf("%d", value) {
 		t.Errorf("integer.TokenLiteral not %d. got = %s", value, integer.TokenLiteral())
+		return false
+	}
+
+	return true
+}
+
+func testFloatLiteral(t *testing.T, fl ast.Expression, value float64) bool {
+	float, ok := fl.(*ast.FloatLiteral)
+	if !ok {
+		t.Errorf("fl not *ast.FloatLiteral. got = %T", fl)
+		return false
+	}
+
+	if math.Abs(float.Value-value) > 0.001 {
+		t.Errorf("float.Value not %f. got = %f", value, float.Value)
 		return false
 	}
 
@@ -301,6 +318,10 @@ func testLiteralExpression(t *testing.T, exp ast.Expression, expected interface{
 		return testIntegerLiteral(t, exp, int64(v))
 	case int64:
 		return testIntegerLiteral(t, exp, v)
+	case float32:
+		return testFloatLiteral(t, exp, float64(v))
+	case float64:
+		return testFloatLiteral(t, exp, v)
 	case string:
 		return testIdentifier(t, exp, v)
 	case bool:
@@ -717,7 +738,7 @@ func TestStringLiteralExpression(t *testing.T) {
 }
 
 func TestParsingArrayLiterals(t *testing.T) {
-	input := "[1, 2 * 2, 3 + 3]"
+	input := "[1, 2 * 2, 3 + 3, 3.14]"
 
 	l := lexer.New(input)
 	p := parser.New(l)
@@ -730,13 +751,14 @@ func TestParsingArrayLiterals(t *testing.T) {
 		t.Fatalf("exp not ast.ArrayLiteral. got=%T", stmt.Expression)
 	}
 
-	if len(array.Elements) != 3 {
-		t.Fatalf("len(array.Elements) not 3. got=%d", len(array.Elements))
+	if len(array.Elements) != 4 {
+		t.Fatalf("len(array.Elements) not 4. got=%d", len(array.Elements))
 	}
 
 	testIntegerLiteral(t, array.Elements[0], 1)
 	testInfixExpression(t, array.Elements[1], 2, "*", 2)
 	testInfixExpression(t, array.Elements[2], 3, "+", 3)
+	testFloatLiteral(t, array.Elements[3], 3.14)
 }
 
 func TestParsingIndexExpressions(t *testing.T) {
