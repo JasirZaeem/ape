@@ -14,6 +14,7 @@ type BuiltinFunction func(args ...Object) Object
 
 const (
 	INTEGER_OBJ      = "INTEGER"
+	FLOAT_OBJ        = "FLOAT"
 	BOOLEAN_OBJ      = "BOOLEAN"
 	NULL_OBJ         = "NULL"
 	RETURN_VALUE_OBJ = "RETURN_VALUE_OBJ"
@@ -40,6 +41,13 @@ type Integer struct {
 
 func (i *Integer) Type() ObjectType { return INTEGER_OBJ }
 func (i *Integer) Inspect() string  { return strconv.FormatInt(i.Value, 10) }
+
+type Float struct {
+	Value float64
+}
+
+func (f *Float) Type() ObjectType { return FLOAT_OBJ }
+func (f *Float) Inspect() string  { return strconv.FormatFloat(f.Value, 'f', -1, 64) }
 
 type Boolean struct {
 	Value bool
