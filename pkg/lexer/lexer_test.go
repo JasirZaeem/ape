@@ -36,6 +36,7 @@ bar"
 "foo\nbar"
 [1, 2];
 {"foo": "bar"}
+0.5 == 0.5;
 `
 
 	tests := []struct {
@@ -132,7 +133,10 @@ bar"
 		{token.COLON, ":"},
 		{token.STRING, "bar"},
 		{token.RBRACE, "}"},
-		{token.EOF, ""},
+		{token.FLOAT, "0.5"},
+		{token.EQ, "=="},
+		{token.FLOAT, "0.5"},
+		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}
 
