@@ -106,4 +106,23 @@ var builtins = map[string]*object.Builtin{
 			return &object.String{Value: args[0].Inspect()}
 		},
 	},
+	"array": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got = %d, want = 1", len(args))
+			}
+			switch arg := args[0].(type) {
+			case *object.Array:
+				return arg
+			case *object.String:
+				elements := make([]object.Object, len(arg.Value))
+				for i, ch := range arg.Value {
+					elements[i] = &object.String{Value: string(ch)}
+				}
+				return &object.Array{Elements: elements}
+			default:
+				return newError("argument to `array` not supported, got %s", args[0].Type())
+			}
+		},
+	},
 }
