@@ -200,6 +200,9 @@ func evalIntegerInfixExpression(operator string, left, right object.Object) obje
 	case "*":
 		return &object.Integer{Value: leftVal * rightVal}
 	case "/":
+		if rightVal == 0 {
+			return newError("division by zero")
+		}
 		return &object.Integer{Value: leftVal / rightVal}
 	case "<":
 		return nativeBoolToBooleanObject(leftVal < rightVal)
@@ -226,6 +229,9 @@ func evalFloatInfixExpression(operator string, left, right object.Object) object
 	case "*":
 		return &object.Float{Value: leftVal * rightVal}
 	case "/":
+		if rightVal == 0 {
+			return newError("division by zero")
+		}
 		return &object.Float{Value: leftVal / rightVal}
 	case "<":
 		return nativeBoolToBooleanObject(leftVal < rightVal)
