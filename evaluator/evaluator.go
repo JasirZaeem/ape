@@ -260,6 +260,9 @@ func isTruthy(obj object.Object) bool {
 	if integer, ok := obj.(*object.Integer); ok && integer.Value == 0 {
 		return false
 	}
+	if float, ok := obj.(*object.Float); ok && float.Value == 0.0 {
+		return false
+	}
 
 	return true
 }
