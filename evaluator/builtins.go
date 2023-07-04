@@ -71,4 +71,31 @@ var builtins = map[string]*object.Builtin{
 			}
 		},
 	},
+	"float": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got = %d, want = 1", len(args))
+			}
+			switch arg := args[0].(type) {
+			case *object.Integer:
+				return &object.Float{Value: float64(arg.Value)}
+			case *object.Float:
+				return arg
+			case *object.Boolean:
+				if arg.Value {
+					return &object.Float{Value: 1.0}
+				} else {
+					return &object.Float{Value: 0.0}
+				}
+			case *object.String:
+				float, err := strconv.ParseFloat(arg.Value, 64)
+				if err != nil {
+					return newError("could not convert %q to float", arg.Value)
+				}
+				return &object.Float{Value: float}
+			default:
+				return newError("argument to `float` not supported, got %s", args[0].Type())
+			}
+		},
+	},
 }
