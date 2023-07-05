@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import "./App.css";
+import CodeMirror from "@uiw/react-codemirror";
 
 function App() {
   const [code, setCode] = useState('print("Hello, World!");');
@@ -34,10 +34,7 @@ function App() {
 
   return (
     <div>
-      <textarea
-        value={code}
-        onChange={(e) => setCode(e.target.value)}
-      ></textarea>
+      <CodeMirror height="200px" onChange={(val) => setCode(val)} />
 
       <button onClick={clickHandler}>Run</button>
 
