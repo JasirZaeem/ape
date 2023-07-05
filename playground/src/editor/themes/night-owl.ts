@@ -23,7 +23,10 @@ export const nightOwlInit = (options?: Partial<CreateThemeOptions>) => {
     },
     styles: [
       { tag: t.keyword, color: "#007197" },
-      { tag: [t.name, t.deleted, t.character, t.macroName], color: "#4876d6" },
+      {
+        tag: [t.name, t.deleted, t.character, t.macroName, t.variableName],
+        color: "#4876d6",
+      },
       { tag: [t.propertyName], color: "#3760bf" },
       {
         tag: [
