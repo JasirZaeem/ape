@@ -7,7 +7,7 @@ import { fibApe } from "./codeExamples.ts";
 
 function App() {
   const [code, setCode] = useState(fibApe);
-  const [evaluated, setEvaluated] = useState(""); // output
+  const [results, setResults] = useState<string[]>([]); // output
   const goRef = useRef(null); // global reference
   const [ready, setReady] = useState(false); // ready to run
 
@@ -33,7 +33,7 @@ function App() {
     if (!ready) return;
     // @ts-ignore
     const result = run(code);
-    setEvaluated(result);
+    setResults((results) => [...results, result]);
   }
 
   return (
@@ -52,7 +52,9 @@ function App() {
 
       <button onClick={clickHandler}>Run</button>
 
-      <pre>{evaluated}</pre>
+      {results.map((result, i) => (
+        <pre key={i}>{result}</pre>
+      ))}
     </div>
   );
 }
