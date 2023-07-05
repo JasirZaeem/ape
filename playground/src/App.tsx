@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
+import { StreamLanguage } from "@codemirror/language";
+import { clike } from "@codemirror/legacy-modes/mode/clike";
+import { nightOwlInit } from "./editor/themes/night-owl.ts";
+import { fibApe } from "./codeExamples.ts";
 
 function App() {
-  const [code, setCode] = useState('print("Hello, World!");');
+  const [code, setCode] = useState(fibApe);
   const [evaluated, setEvaluated] = useState(""); // output
   const goRef = useRef(null); // global reference
   const [ready, setReady] = useState(false); // ready to run
@@ -34,7 +38,17 @@ function App() {
 
   return (
     <div>
-      <CodeMirror height="200px" onChange={(val) => setCode(val)} />
+      <CodeMirror
+        height="200px"
+        value={code}
+        onChange={(val) => setCode(val)}
+        theme={nightOwlInit()}
+        extensions={[
+          StreamLanguage.define(
+            clike({ name: "ape", keywords: ["fn", "if", "else", "let"] })
+          ),
+        ]}
+      />
 
       <button onClick={clickHandler}>Run</button>
 
