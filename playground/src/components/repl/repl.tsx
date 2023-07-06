@@ -38,7 +38,7 @@ function ReplHistoryItem({
 export function Repl({ history, replHandler }: ReplProps) {
   return (
     <div className="container py-4 flex flex-col max-w-full h-full overflow-auto w-full">
-      <h3>Output:</h3>
+      <h3 className="text-xl mb-2">Output:</h3>
 
       <ScrollArea>
         <pre className="flex flex-col max-w-full h-full w-full text-base font-mono">
