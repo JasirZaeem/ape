@@ -1,4 +1,4 @@
-import { FormEventHandler, useEffect, useRef, useState } from "react";
+import { FormEventHandler, useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { StreamLanguage } from "@codemirror/language";
 import { clike } from "@codemirror/legacy-modes/mode/clike";
@@ -7,51 +7,16 @@ import { fibApe } from "./codeExamples.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { Separator } from "@radix-ui/react-separator";
 import { Repl } from "@/components/repl";
+import { ReplHistoryType, useApeInterpreter } from "@/hooks/useApe.ts";
 
 function App() {
+  const { ready, history, runCode, resetApe } = useApeInterpreter();
+
   const [code, setCode] = useState(fibApe);
-  const [results, setResults] = useState<string[]>([]); // output
-  const goRef = useRef(null); // global reference
-  const [ready, setReady] = useState(false); // ready to run
-
-  // load ape.wasm
-
-  useEffect(() => {
-    // override console.log to add output to results and then call original console.log
-    // @ts-ignore
-    const originalLog = console.log;
-    // @ts-ignore
-    console.log = (...args) => {
-      setResults((results) => [...results, args.join(" ")]);
-      originalLog(...args);
-    };
-
-    const loadWasm = async () => {
-      // @ts-ignore
-      goRef.current = new globalThis.Go();
-      // @ts-ignore
-      const result = await WebAssembly.instantiateStreaming(
-        fetch("/ape.wasm"),
-        // @ts-ignore
-        goRef.current.importObject
-      );
-      // @ts-ignore
-      goRef.current.run(result.instance);
-    };
-    loadWasm().then(() => setReady(true));
-
-    return () => {
-      // @ts-ignore
-      console.log = originalLog;
-    };
-  }, []);
 
   function clickHandler() {
     if (!ready) return;
-    // Global function from ape.wasm
-    // @ts-ignore
-    const result = runApeProgram(code);
-    setResults((results) => [...results, result]);
+    runCode(code, ReplHistoryType.EDITOR_CODE);
   }
 
   const replHandler: FormEventHandler<HTMLFormElement> = (e) => {
@@ -60,10 +25,7 @@ function App() {
     // @ts-ignore
     const replCode = e.target["repl-code"].value as string;
     if (ready && replCode) {
-      // Global function from ape.wasm
-      // @ts-ignore
-      const result = runApeProgram(replCode);
-      setResults((results) => [...results, result]);
+      runCode(replCode, ReplHistoryType.REPL_CODE);
       // @ts-ignore
       e.target["repl-code"].value = "";
     }
@@ -80,9 +42,7 @@ function App() {
             </Button>
             <Button
               onClick={() => {
-                // Global function from ape.wasm
-                // @ts-ignore
-                resetApeEnvironment();
+                resetApe();
               }}
               variant="outline"
             >
@@ -108,7 +68,7 @@ function App() {
         />
 
         <Separator />
-        <Repl results={results} replHandler={replHandler} />
+        <Repl history={history} replHandler={replHandler} />
       </main>
 
       <footer className="container flex flex-col items-start space-y-2 py-4 sm:space-y-0 md:h-16">
