@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { StreamLanguage } from "@codemirror/language";
 import { clike } from "@codemirror/legacy-modes/mode/clike";
-import { nightOwlInit } from "./editor/themes/night-owl.ts";
+import { nightOwlInit } from "@/editor/themes/night-owl.ts";
 import { fibApe } from "./codeExamples.ts";
 
 function App() {
