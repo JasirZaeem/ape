@@ -94,15 +94,18 @@ function App() {
         />
 
         <Separator />
-        <pre className="container flex flex-col max-w-full h-full overflow-auto w-full text-sm">
+        <pre className="container flex flex-col max-w-full h-full overflow-auto w-full text-sm font-mono">
           {results.map((result, i) => (
             <code key={i}>
-              <span className="text-green-300">[{i + 1}]</span> {result}
+              <span className="text-green-300 w-10 pr-2 inline-block text-right">
+                [{i + 1}]
+              </span>
+              {result}
             </code>
           ))}
           <code className="relative">
             <DoubleArrowRightIcon className="text-green-300 absolute inline-block mt-1 w-8 h-4 animate-pulse" />
-            <Input className="inline w-full m-0 h-6 pl-8" />
+            <Input className="inline w-full m-0 h-6 pl-10" />
           </code>
         </pre>
       </main>
