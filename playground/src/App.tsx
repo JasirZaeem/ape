@@ -6,6 +6,8 @@ import { nightOwlInit } from "@/editor/themes/night-owl.ts";
 import { fibApe } from "./codeExamples.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { Separator } from "@radix-ui/react-separator";
+import { Input } from "@/components/ui/input.tsx";
+import { DoubleArrowRightIcon } from "@radix-ui/react-icons";
 
 function App() {
   const [code, setCode] = useState(fibApe);
@@ -47,8 +49,9 @@ function App() {
 
   function clickHandler() {
     if (!ready) return;
+    // Global function from ape.wasm
     // @ts-ignore
-    const result = run(code);
+    const result = runApeProgram(code);
     setResults((results) => [...results, result]);
   }
 
@@ -61,6 +64,16 @@ function App() {
             <Button onClick={clickHandler} variant="outline">
               Run
             </Button>
+            <Button
+              onClick={() => {
+                // Global function from ape.wasm
+                // @ts-ignore
+                resetApeEnvironment();
+              }}
+              variant="outline"
+            >
+              Reset
+            </Button>
           </div>
         </nav>
         <Separator />
@@ -68,7 +81,7 @@ function App() {
 
       <main className="h-full flex flex-col w-full overflow-hidden">
         <CodeMirror
-          className="flex flex-row w-full max-w-full"
+          className="flex flex-row w-full max-w-full text-base"
           height="400px"
           value={code}
           onChange={(val) => setCode(val)}
@@ -81,18 +94,22 @@ function App() {
         />
 
         <Separator />
-        <pre className="container flex flex-col max-w-full h-full overflow-auto w-full">
+        <pre className="container flex flex-col max-w-full h-full overflow-auto w-full text-sm">
           {results.map((result, i) => (
             <code key={i}>
               <span className="text-green-300">[{i + 1}]</span> {result}
             </code>
           ))}
+          <code className="relative">
+            <DoubleArrowRightIcon className="text-green-300 absolute inline-block mt-1 w-8 h-4 animate-pulse" />
+            <Input className="inline w-full m-0 h-6 pl-8" />
+          </code>
         </pre>
       </main>
 
       <footer className="container flex flex-col items-start space-y-2 py-4 sm:space-y-0 md:h-16">
-        <Separator />
-        APE Playground
+        <Separator className="my-4" />
+        <div>APE Playground</div>
       </footer>
     </div>
   );
