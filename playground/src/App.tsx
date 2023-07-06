@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { FormEventHandler, useEffect, useRef, useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { StreamLanguage } from "@codemirror/language";
 import { clike } from "@codemirror/legacy-modes/mode/clike";
@@ -55,6 +55,21 @@ function App() {
     setResults((results) => [...results, result]);
   }
 
+  const replHandler: FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    // Get data from form
+    // @ts-ignore
+    const replCode = e.target["repl-code"].value as string;
+    if (ready && replCode) {
+      // Global function from ape.wasm
+      // @ts-ignore
+      const result = runApeProgram(replCode);
+      setResults((results) => [...results, result]);
+      // @ts-ignore
+      e.target["repl-code"].value = "";
+    }
+  };
+
   return (
     <div className="bg-background h-full max-h-full grid grid-rows-layout w-full max-w-full overflow-hidden">
       <div>
@@ -105,7 +120,9 @@ function App() {
           ))}
           <code className="relative">
             <DoubleArrowRightIcon className="text-green-300 absolute inline-block mt-1 w-8 h-4 animate-pulse" />
-            <Input className="inline w-full m-0 h-6 pl-10" />
+            <form onSubmit={replHandler}>
+              <Input className="inline w-full m-0 h-6 pl-10" name="repl-code" />
+            </form>
           </code>
         </pre>
       </main>
