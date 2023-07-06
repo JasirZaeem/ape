@@ -4,10 +4,10 @@ import { StreamLanguage } from "@codemirror/language";
 import { clike } from "@codemirror/legacy-modes/mode/clike";
 import { nightOwlInit } from "@/editor/themes/night-owl.ts";
 import { fibApe } from "./codeExamples.ts";
-import { Button } from "@/components/ui/button.tsx";
-import { Separator } from "@radix-ui/react-separator";
+import { Separator } from "@/components/ui/separator.tsx";
 import { Repl } from "@/components/repl";
 import { ApeCodeSource, useApeInterpreter } from "@/hooks/useApe.ts";
+import { Menu } from "@/components/menu";
 
 function App() {
   const { ready, history, runCode, resetApe } = useApeInterpreter();
@@ -33,26 +33,7 @@ function App() {
 
   return (
     <div className="bg-background h-full max-h-full grid grid-rows-layout w-full max-w-full overflow-hidden">
-      <div>
-        <nav className="container flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
-          <h2 className="text-lg font-semibold">Playground</h2>
-          <div className="ml-auto flex w-full space-x-2 sm:justify-end">
-            <Button onClick={clickHandler} variant="outline">
-              Run
-            </Button>
-            <Button
-              onClick={() => {
-                resetApe();
-              }}
-              variant="outline"
-            >
-              Reset
-            </Button>
-          </div>
-        </nav>
-        <Separator />
-      </div>
-
+      <Menu onRun={clickHandler} onReset={resetApe} />
       <main className="h-full flex flex-col w-full overflow-hidden">
         <CodeMirror
           className="flex flex-row w-full max-w-full text-base"
