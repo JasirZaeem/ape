@@ -15,6 +15,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip.tsx";
 
 type MenuProps = {
   onRun: () => void;
@@ -43,22 +49,64 @@ export function Menu({ onRun, onRunSelected, onReset }: MenuProps) {
       <nav className="px-8 flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
         <h2 className="text-lg font-semibold">Playground</h2>
         <div className="ml-auto flex w-full space-x-2 sm:justify-end">
-          <Button onClick={onRun} variant="default" size="icon">
-            <PlayIcon />
-          </Button>
-          <Button onClick={onRunSelected} variant="outline" size="icon">
-            <CursorTextIcon />
-          </Button>
-          <Button onClick={onReset} variant="outline" size="icon">
-            <ResetIcon />
-          </Button>
-          {/*  theme switcher */}
+          <TooltipProvider delayDuration={500}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button onClick={onRun} variant="default" size="icon">
+                  <PlayIcon />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Run code</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider delayDuration={500}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button onClick={onRunSelected} variant="outline" size="icon">
+                  <CursorTextIcon />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Run selected code</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider delayDuration={500}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button onClick={onReset} variant="outline" size="icon">
+                  <ResetIcon />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-center">
+                  Reset interpreter environment
+                  <br />
+                  (removes all set variables)
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
-                <CurrentThemeIcon />
-              </Button>
-            </DropdownMenuTrigger>
+            <TooltipProvider delayDuration={500}>
+              <Tooltip>
+                <DropdownMenuTrigger asChild>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" size="icon">
+                      <CurrentThemeIcon />
+                    </Button>
+                  </TooltipTrigger>
+                </DropdownMenuTrigger>
+                <TooltipContent>
+                  <p>Switch theme</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <DropdownMenuContent>
               {Object.entries(themeIcons).map(([theme, Icon]) => (
                 <DropdownMenuItem
