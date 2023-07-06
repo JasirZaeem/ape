@@ -6,8 +6,7 @@ import { nightOwlInit } from "@/editor/themes/night-owl.ts";
 import { fibApe } from "./codeExamples.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { Separator } from "@radix-ui/react-separator";
-import { Input } from "@/components/ui/input.tsx";
-import { DoubleArrowRightIcon } from "@radix-ui/react-icons";
+import { Repl } from "@/components/repl";
 
 function App() {
   const [code, setCode] = useState(fibApe);
@@ -109,22 +108,7 @@ function App() {
         />
 
         <Separator />
-        <pre className="container flex flex-col max-w-full h-full overflow-auto w-full text-sm font-mono">
-          {results.map((result, i) => (
-            <code key={i}>
-              <span className="text-green-300 w-10 pr-2 inline-block text-right">
-                [{i + 1}]
-              </span>
-              {result}
-            </code>
-          ))}
-          <code className="relative">
-            <DoubleArrowRightIcon className="text-green-300 absolute inline-block mt-1 w-8 h-4 animate-pulse" />
-            <form onSubmit={replHandler}>
-              <Input className="inline w-full m-0 h-6 pl-10" name="repl-code" />
-            </form>
-          </code>
-        </pre>
+        <Repl results={results} replHandler={replHandler} />
       </main>
 
       <footer className="container flex flex-col items-start space-y-2 py-4 sm:space-y-0 md:h-16">
