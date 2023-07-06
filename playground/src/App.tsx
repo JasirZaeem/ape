@@ -4,6 +4,7 @@ import { StreamLanguage } from "@codemirror/language";
 import { clike } from "@codemirror/legacy-modes/mode/clike";
 import { nightOwlInit } from "@/editor/themes/night-owl.ts";
 import { fibApe } from "./codeExamples.ts";
+import { Button } from "@/components/ui/button.tsx";
 
 function App() {
   const [code, setCode] = useState(fibApe);
@@ -37,7 +38,7 @@ function App() {
   }
 
   return (
-    <div>
+    <div className="bg-background">
       <CodeMirror
         height="200px"
         value={code}
@@ -50,7 +51,9 @@ function App() {
         ]}
       />
 
-      <button onClick={clickHandler}>Run</button>
+      <Button onClick={clickHandler} variant="outline">
+        Run
+      </Button>
 
       {results.map((result, i) => (
         <pre key={i}>{result}</pre>
