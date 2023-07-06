@@ -10,6 +10,9 @@ import (
 	"syscall/js"
 )
 
+// global environment
+var env *object.Environment
+
 func Run(this js.Value, args []js.Value) interface{} {
 	// ensure only one argument is passed
 	if len(args) != 1 {
@@ -18,8 +21,6 @@ func Run(this js.Value, args []js.Value) interface{} {
 
 	// get the code from the argument
 	code := args[0].String()
-
-	env := object.NewEnvironment()
 
 	l := lexer.New(code)
 	p := parser.New(l)
@@ -34,12 +35,23 @@ func Run(this js.Value, args []js.Value) interface{} {
 	return evaluated.Inspect()
 }
 
+func Reset(this js.Value, args []js.Value) interface{} {
+	if len(args) != 0 {
+		return fmt.Sprintf("wrong number of arguments. got = %d, want = 0", len(args))
+	}
+
+	env = object.NewEnvironment()
+	return nil
+}
+
 func RegisterCallbacks() {
-	js.Global().Set("run", js.FuncOf(Run))
+	js.Global().Set("runApeProgram", js.FuncOf(Run))
+	js.Global().Set("resetApeEnvironment", js.FuncOf(Reset))
 }
 
 func main() {
 	c := make(chan struct{}, 0)
+	env = object.NewEnvironment()
 
 	fmt.Println("APE Interpreter Initialized")
 	RegisterCallbacks()
