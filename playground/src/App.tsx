@@ -5,6 +5,7 @@ import { clike } from "@codemirror/legacy-modes/mode/clike";
 import { nightOwlInit } from "@/editor/themes/night-owl.ts";
 import { fibApe } from "./codeExamples.ts";
 import { Button } from "@/components/ui/button.tsx";
+import { Separator } from "@radix-ui/react-separator";
 
 function App() {
   const [code, setCode] = useState(fibApe);
@@ -38,7 +39,18 @@ function App() {
   }
 
   return (
-    <div className="bg-background">
+    <div className="bg-background h-full flex-col">
+      <nav className="container flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
+        <h2 className="text-lg font-semibold">Playground</h2>
+        <div className="ml-auto flex w-full space-x-2 sm:justify-end">
+          <Button onClick={clickHandler} variant="outline">
+            Run
+          </Button>
+        </div>
+      </nav>
+
+      <Separator />
+
       <CodeMirror
         height="200px"
         value={code}
@@ -51,13 +63,14 @@ function App() {
         ]}
       />
 
-      <Button onClick={clickHandler} variant="outline">
-        Run
-      </Button>
-
-      {results.map((result, i) => (
-        <pre key={i}>{result}</pre>
-      ))}
+      <Separator />
+      <div>
+        {results.map((result, i) => (
+          <pre key={i}>{result}</pre>
+        ))}
+      </div>
+      <Separator />
+      <footer>APE Playground by</footer>
     </div>
   );
 }
