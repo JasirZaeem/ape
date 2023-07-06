@@ -16,6 +16,15 @@ function App() {
   // load ape.wasm
 
   useEffect(() => {
+    // override console.log to add output to results and then call original console.log
+    // @ts-ignore
+    const originalLog = console.log;
+    // @ts-ignore
+    console.log = (...args) => {
+      setResults((results) => [...results, args.join(" ")]);
+      originalLog(...args);
+    };
+
     const loadWasm = async () => {
       // @ts-ignore
       goRef.current = new globalThis.Go();
@@ -29,6 +38,11 @@ function App() {
       goRef.current.run(result.instance);
     };
     loadWasm().then(() => setReady(true));
+
+    return () => {
+      // @ts-ignore
+      console.log = originalLog;
+    };
   }, []);
 
   function clickHandler() {
@@ -39,38 +53,47 @@ function App() {
   }
 
   return (
-    <div className="bg-background h-full flex-col">
-      <nav className="container flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
-        <h2 className="text-lg font-semibold">Playground</h2>
-        <div className="ml-auto flex w-full space-x-2 sm:justify-end">
-          <Button onClick={clickHandler} variant="outline">
-            Run
-          </Button>
-        </div>
-      </nav>
-
-      <Separator />
-
-      <CodeMirror
-        height="200px"
-        value={code}
-        onChange={(val) => setCode(val)}
-        theme={nightOwlInit()}
-        extensions={[
-          StreamLanguage.define(
-            clike({ name: "ape", keywords: ["fn", "if", "else", "let"] })
-          ),
-        ]}
-      />
-
-      <Separator />
+    <div className="bg-background h-full max-h-full grid grid-rows-layout w-full max-w-full overflow-hidden">
       <div>
-        {results.map((result, i) => (
-          <pre key={i}>{result}</pre>
-        ))}
+        <nav className="container flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
+          <h2 className="text-lg font-semibold">Playground</h2>
+          <div className="ml-auto flex w-full space-x-2 sm:justify-end">
+            <Button onClick={clickHandler} variant="outline">
+              Run
+            </Button>
+          </div>
+        </nav>
+        <Separator />
       </div>
-      <Separator />
-      <footer>APE Playground by</footer>
+
+      <main className="h-full flex flex-col w-full overflow-hidden">
+        <CodeMirror
+          className="flex flex-row w-full max-w-full"
+          height="400px"
+          value={code}
+          onChange={(val) => setCode(val)}
+          theme={nightOwlInit()}
+          extensions={[
+            StreamLanguage.define(
+              clike({ name: "ape", keywords: ["fn", "if", "else", "let"] })
+            ),
+          ]}
+        />
+
+        <Separator />
+        <pre className="container flex flex-col max-w-full h-full overflow-auto w-full">
+          {results.map((result, i) => (
+            <code key={i}>
+              <span className="text-green-300">[{i + 1}]</span> {result}
+            </code>
+          ))}
+        </pre>
+      </main>
+
+      <footer className="container flex flex-col items-start space-y-2 py-4 sm:space-y-0 md:h-16">
+        <Separator />
+        APE Playground
+      </footer>
     </div>
   );
 }
