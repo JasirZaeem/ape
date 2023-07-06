@@ -52,9 +52,11 @@ function App() {
         <Repl history={history} replHandler={replHandler} />
       </main>
 
-      <footer className="container flex flex-col items-start space-y-2 py-4 sm:space-y-0 md:h-16">
-        <Separator className="my-4" />
-        <div>APE Playground</div>
+      <footer>
+        <Separator />
+        <div className="px-8 flex flex-col items-start space-y-2 py-4 sm:space-y-0 md:h-16">
+          APE Playground
+        </div>
       </footer>
     </div>
   );
