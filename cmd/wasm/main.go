@@ -32,7 +32,11 @@ func Run(this js.Value, args []js.Value) interface{} {
 
 	evaluated := evaluator.Eval(program, env)
 
-	return evaluated.Inspect()
+	if evaluated != nil {
+		return evaluated.Inspect()
+	}
+
+	return ""
 }
 
 func Reset(this js.Value, args []js.Value) interface{} {
