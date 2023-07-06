@@ -16,7 +16,11 @@ var env *object.Environment
 func Run(this js.Value, args []js.Value) interface{} {
 	// ensure only one argument is passed
 	if len(args) != 1 {
-		return fmt.Sprintf("wrong number of arguments. got = %d, want = 1", len(args))
+		return map[string]interface{}{
+			"type":  "WASM_ERROR",
+			"value": fmt.Sprintf("wrong number of arguments. got = %d, want = 1", len(args)),
+		}
+
 	}
 
 	// get the code from the argument
@@ -27,16 +31,25 @@ func Run(this js.Value, args []js.Value) interface{} {
 
 	program := p.ParseProgram()
 	if len(p.Errors()) != 0 {
-		return strings.Join(p.Errors(), "\n")
+		return map[string]interface{}{
+			"type":  "PARSER_ERROR",
+			"value": strings.Join(p.Errors(), "\n"),
+		}
 	}
 
 	evaluated := evaluator.Eval(program, env)
 
 	if evaluated != nil {
-		return evaluated.Inspect()
+		return map[string]interface{}{
+			"type":  string(evaluated.Type()),
+			"value": evaluated.Inspect(),
+		}
 	}
 
-	return ""
+	return map[string]interface{}{
+		"type":  "EMPTY",
+		"value": "",
+	}
 }
 
 func Reset(this js.Value, args []js.Value) interface{} {
