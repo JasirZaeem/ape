@@ -22,19 +22,28 @@ export enum ApeResultType {
   STDOUT = "STDOUT",
 }
 
-export enum ReplHistoryType {
-  REPL_CODE = "REPL_CODE",
-  EDITOR_CODE = "EDITOR_CODE",
+export enum ApeCodeSource {
+  REPL = "REPL",
+  EDITOR = "EDITOR",
 }
 
 export type ApeResult = {
-  type: ApeResultType | ReplHistoryType;
+  type: ApeResultType;
   value: string;
 };
 
+export type ApeInterpreterHistory = {
+  type: ApeResultType | ApeCodeSource;
+  value: string;
+  order?: number;
+  id: number;
+};
+
+let NEXT_ORDER = 0;
+
 export function useApeInterpreter() {
   const [ready, setReady] = useState(false);
-  const [history, setHistory] = useState<ApeResult[]>([]);
+  const [history, setHistory] = useState<ApeInterpreterHistory[]>([]);
   const goRef = useRef<any>();
 
   useEffect(() => {
@@ -45,7 +54,11 @@ export function useApeInterpreter() {
     console.log = (...args) => {
       setHistory((results) => [
         ...results,
-        { type: ApeResultType.STDOUT, value: args.join(" ") },
+        {
+          type: ApeResultType.STDOUT,
+          value: args.join(" "),
+          id: results.length,
+        },
       ]);
       originalLog(...args);
     };
@@ -73,12 +86,19 @@ export function useApeInterpreter() {
   return {
     ready,
     history,
-    runCode: (code: string, source: ReplHistoryType) => {
-      setHistory((results) => [...results, { type: source, value: code }]);
+    runCode: (code: string, source: ApeCodeSource) => {
+      setHistory((results) => [
+        ...results,
+        { type: source, value: code, order: NEXT_ORDER, id: results.length },
+      ]);
       // runApeProgram global function is injected by Go
       // @ts-ignore
       const result = runApeProgram(code) as ApeResult;
-      setHistory((results) => [...results, result]);
+      setHistory((results) => [
+        ...results,
+        { ...result, order: NEXT_ORDER, id: results.length },
+      ]);
+      NEXT_ORDER++;
       return result;
     },
     resetApe: () => {

@@ -7,7 +7,7 @@ import { fibApe } from "./codeExamples.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { Separator } from "@radix-ui/react-separator";
 import { Repl } from "@/components/repl";
-import { ReplHistoryType, useApeInterpreter } from "@/hooks/useApe.ts";
+import { ApeCodeSource, useApeInterpreter } from "@/hooks/useApe.ts";
 
 function App() {
   const { ready, history, runCode, resetApe } = useApeInterpreter();
@@ -16,7 +16,7 @@ function App() {
 
   function clickHandler() {
     if (!ready) return;
-    runCode(code, ReplHistoryType.EDITOR_CODE);
+    runCode(code, ApeCodeSource.EDITOR);
   }
 
   const replHandler: FormEventHandler<HTMLFormElement> = (e) => {
@@ -25,7 +25,7 @@ function App() {
     // @ts-ignore
     const replCode = e.target["repl-code"].value as string;
     if (ready && replCode) {
-      runCode(replCode, ReplHistoryType.REPL_CODE);
+      runCode(replCode, ApeCodeSource.REPL);
       // @ts-ignore
       e.target["repl-code"].value = "";
     }

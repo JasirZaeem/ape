@@ -1,25 +1,44 @@
 import { DoubleArrowRightIcon } from "@radix-ui/react-icons";
 import { Input } from "@/components/ui/input.tsx";
 import { FormEventHandler } from "react";
+import { ApeCodeSource, ApeInterpreterHistory } from "@/hooks/useApe.ts";
+import { cn } from "@/lib/utils.ts";
 
 type ReplProps = {
-  history: {
-    type: string;
-    value: string;
-  }[];
+  history: ApeInterpreterHistory[];
   replHandler: FormEventHandler<HTMLFormElement>;
 };
+
+const IN_TYPES: string[] = [ApeCodeSource.EDITOR, ApeCodeSource.REPL];
+
+function ReplHistoryItem({
+  order,
+  type,
+  value,
+}: Omit<ApeInterpreterHistory, "id">) {
+  const inType = IN_TYPES.includes(type);
+  return (
+    <code>
+      {order !== undefined && (
+        <span
+          className={cn(
+            "pr-2 inline-block text-right",
+            inType ? "text-rose-600" : "text-green-300"
+          )}
+        >
+          {inType ? "In " : "Out"}[{order}]
+        </span>
+      )}
+      {type === ApeCodeSource.EDITOR ? "<From Editor>" : value}
+    </code>
+  );
+}
 
 export function Repl({ history, replHandler }: ReplProps) {
   return (
     <pre className="container flex flex-col max-w-full h-full overflow-auto w-full text-sm font-mono">
-      {history.map(({ type, value }, i) => (
-        <code key={i}>
-          <span className="text-green-300 w-10 pr-2 inline-block text-right">
-            [{i + 1}]
-          </span>
-          {type} {value}
-        </code>
+      {history.map(({ id, ...item }) => (
+        <ReplHistoryItem key={id} {...item} />
       ))}
       <code className="relative">
         <DoubleArrowRightIcon className="text-green-300 absolute inline-block mt-1 w-8 h-4 animate-pulse" />
