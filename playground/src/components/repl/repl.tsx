@@ -41,7 +41,7 @@ export function Repl({ history, replHandler }: ReplProps) {
         <ReplHistoryItem key={id} {...item} />
       ))}
       <code className="relative">
-        <DoubleArrowRightIcon className="text-green-300 absolute inline-block mt-1 w-8 h-4 animate-pulse" />
+        <DoubleArrowRightIcon className="text-green-300 absolute inline-block mt-0.5 w-8 h-5 animate-pulse" />
         <form onSubmit={replHandler}>
           <Input className="inline w-full m-0 h-6 pl-10" name="repl-code" />
         </form>
