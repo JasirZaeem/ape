@@ -1,13 +1,13 @@
 import { FormEventHandler, useRef, useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { StreamLanguage } from "@codemirror/language";
-import { clike } from "@codemirror/legacy-modes/mode/clike";
 import { nightOwlInit } from "@/editor/themes/night-owl.ts";
 import { fibApe } from "./codeExamples.ts";
 import { Separator } from "@/components/ui/separator.tsx";
 import { Repl } from "@/components/repl";
 import { ApeCodeSource, useApeInterpreter } from "@/hooks/useApe.ts";
 import { Menu } from "@/components/menu";
+import { apeMode } from "@/editor/apeMode.ts";
 
 function App() {
   const { ready, history, runCode, resetApe } = useApeInterpreter();
@@ -50,11 +50,7 @@ function App() {
           value={code}
           onChange={(val) => setCode(val)}
           theme={nightOwlInit()}
-          extensions={[
-            StreamLanguage.define(
-              clike({ name: "ape", keywords: ["fn", "if", "else", "let"] })
-            ),
-          ]}
+          extensions={[StreamLanguage.define(apeMode)]}
           onStatistics={(stats) => {
             selectedCodeRef.current = stats.selectionCode;
           }}
