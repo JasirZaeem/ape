@@ -109,12 +109,15 @@ export function Menu({
             <TooltipProvider delayDuration={500}>
               <Tooltip>
                 <DropdownMenuTrigger asChild>
-                  <TooltipTrigger asChild>
-                    <Button variant="outline" size="icon">
-                      <CurrentThemeIcon />
-                    </Button>
-                  </TooltipTrigger>
+                  <span>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" size="icon">
+                        <CurrentThemeIcon />
+                      </Button>
+                    </TooltipTrigger>
+                  </span>
                 </DropdownMenuTrigger>
+
                 <TooltipContent>
                   <p>Switch theme</p>
                 </TooltipContent>
