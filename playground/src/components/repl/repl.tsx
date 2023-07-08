@@ -24,7 +24,7 @@ function ReplHistoryItem({
         <span
           className={cn(
             "pr-2 inline-block text-right",
-            inType ? "text-rose-600" : "text-green-300"
+            inType ? "text-red-500" : "text-green-500"
           )}
         >
           {inType ? "In " : "Out"}[{order}]
