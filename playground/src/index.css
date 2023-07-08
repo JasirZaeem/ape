@@ -86,3 +86,21 @@
 .cm-line, .cm-line span {
     word-break: break-word;
 }
+
+/* styles.css */
+.split-pane {
+  display: flex;
+  flex-direction: column;
+}
+
+.split-pane-top,
+.split-pane-bottom {
+  flex: 1;
+  overflow: hidden;
+}
+
+
+.separator {
+  border: 5px solid black;
+  cursor: row-resize;
+}

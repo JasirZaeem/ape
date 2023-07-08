@@ -8,6 +8,8 @@ import { Repl } from "@/components/repl";
 import { ApeCodeSource, useApeInterpreter } from "@/hooks/useApe.ts";
 import { Menu } from "@/components/menu";
 import { apeMode } from "@/editor/apeMode.ts";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 
 function App() {
   const { ready, history, runCode, resetApe } = useApeInterpreter();
@@ -43,22 +45,26 @@ function App() {
         onReset={resetApe}
         onRunSelected={selectedCodeHandler}
       />
-      <main className="h-full flex flex-col w-full overflow-hidden">
-        <CodeMirror
-          className="flex flex-row w-full max-w-full text-base"
-          height="400px"
-          value={code}
-          onChange={(val) => setCode(val)}
-          theme={nightOwlInit()}
-          extensions={[StreamLanguage.define(apeMode)]}
-          onStatistics={(stats) => {
-            selectedCodeRef.current = stats.selectionCode;
-          }}
-        />
-
-        <Separator />
-        <Repl history={history} replHandler={replHandler} />
-      </main>
+      <PanelGroup direction="vertical">
+        <Panel>
+          <CodeMirror
+            className="flex flex-row w-full max-w-full h-full text-base"
+            value={code}
+            onChange={(val) => setCode(val)}
+            theme={nightOwlInit()}
+            extensions={[StreamLanguage.define(apeMode)]}
+            onStatistics={(stats) => {
+              selectedCodeRef.current = stats.selectionCode;
+            }}
+          />
+        </Panel>
+        <PanelResizeHandle className="relative flex justify-center align-middle group bg-border h-2">
+          <DotsHorizontalIcon className="absolute my-auto -translate-y-1/4 invisible group-hover:visible" />
+        </PanelResizeHandle>
+        <Panel>
+          <Repl history={history} replHandler={replHandler} />
+        </Panel>
+      </PanelGroup>
 
       <footer>
         <Separator />
