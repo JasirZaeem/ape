@@ -87,18 +87,18 @@ export function useApeInterpreter() {
     ready,
     history,
     runCode: (code: string, source: ApeCodeSource) => {
+      const order = NEXT_ORDER++;
       setHistory((results) => [
         ...results,
-        { type: source, value: code, order: NEXT_ORDER, id: results.length },
+        { type: source, value: code, order, id: results.length },
       ]);
       // runApeProgram global function is injected by Go
       // @ts-ignore
       const result = runApeProgram(code) as ApeResult;
       setHistory((results) => [
         ...results,
-        { ...result, order: NEXT_ORDER, id: results.length },
+        { ...result, order, id: results.length },
       ]);
-      NEXT_ORDER++;
       return result;
     },
     resetApe: () => {
