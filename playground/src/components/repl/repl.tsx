@@ -1,6 +1,6 @@
 import { DoubleArrowRightIcon } from "@radix-ui/react-icons";
 import { Input } from "@/components/ui/input.tsx";
-import { FormEventHandler } from "react";
+import { FormEventHandler, useEffect, useRef } from "react";
 import { ApeCodeSource, ApeInterpreterHistory } from "@/hooks/useApe.ts";
 import { cn } from "@/lib/utils.ts";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
@@ -36,12 +36,43 @@ function ReplHistoryItem({
 }
 
 export function Repl({ history, replHandler }: ReplProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autoScroll = useRef(true);
+
+  useEffect(() => {
+    if (containerRef.current && autoScroll.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
+  }, [history]);
+
+  const scrollHandler = () => {
+    if (containerRef.current) {
+      // Resume auto scroll if user is close to the bottom
+      autoScroll.current =
+        containerRef.current.scrollHeight -
+          (containerRef.current.scrollTop + containerRef.current.clientHeight) <
+        10;
+    }
+  };
+
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.addEventListener("scroll", scrollHandler);
+    }
+
+    return () => {
+      if (containerRef.current) {
+        containerRef.current.removeEventListener("scroll", scrollHandler);
+      }
+    };
+  }, []);
+
   return (
-    <div className="container py-4 flex flex-col max-w-full h-full overflow-auto w-full">
+    <div className="container py-1 flex flex-col max-w-full h-full overflow-auto w-full">
       <h3 className="text-xl mb-2">Output:</h3>
 
-      <ScrollArea>
-        <pre className="flex flex-col max-w-full h-full w-full text-base font-mono">
+      <ScrollArea ref={containerRef}>
+        <pre className="flex flex-col max-w-full h-full w-full text-base font-mono py-1">
           {history.map(({ id, ...item }) => (
             <ReplHistoryItem key={id} {...item} />
           ))}
