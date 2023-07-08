@@ -44,6 +44,7 @@ function App() {
         onRun={clickHandler}
         onReset={resetApe}
         onRunSelected={selectedCodeHandler}
+        onClearCode={() => setCode("")}
         codeSelected={selectedCode !== ""}
       />
       <PanelGroup direction="vertical">

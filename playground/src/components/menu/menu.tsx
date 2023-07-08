@@ -6,6 +6,7 @@ import {
   PlayIcon,
   ResetIcon,
   SunIcon,
+  TrashIcon,
 } from "@radix-ui/react-icons";
 import { Separator } from "@/components/ui/separator.tsx";
 import { Theme, useTheme } from "@/themeContext.tsx";
@@ -26,6 +27,7 @@ type MenuProps = {
   onRun: () => void;
   onRunSelected: () => void;
   onReset: () => void;
+  onClearCode: () => void;
   codeSelected: boolean;
 };
 
@@ -45,6 +47,7 @@ export function Menu({
   onRun,
   onRunSelected,
   onReset,
+  onClearCode,
   codeSelected,
 }: MenuProps) {
   const { theme, setTheme } = useTheme();
@@ -101,6 +104,19 @@ export function Menu({
                   <br />
                   (removes all set variables)
                 </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider delayDuration={500}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button onClick={onClearCode} variant="outline" size="icon">
+                  <TrashIcon />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Clear code</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
