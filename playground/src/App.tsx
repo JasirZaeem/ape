@@ -1,4 +1,4 @@
-import { FormEventHandler, useRef, useState } from "react";
+import { FormEventHandler, useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { StreamLanguage } from "@codemirror/language";
 import { nightOwlInit } from "@/editor/themes/night-owl.ts";
@@ -14,7 +14,7 @@ import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 function App() {
   const { ready, history, runCode, resetApe } = useApeInterpreter();
   const [code, setCode] = useState(fibApe);
-  const selectedCodeRef = useRef<string>("");
+  const [selectedCode, setSelectedCode] = useState("");
 
   function clickHandler() {
     if (!ready) return;
@@ -22,8 +22,8 @@ function App() {
   }
 
   function selectedCodeHandler() {
-    if (!ready || !selectedCodeRef.current) return;
-    runCode(selectedCodeRef.current, ApeCodeSource.EDITOR);
+    if (!ready) return;
+    runCode(selectedCode, ApeCodeSource.EDITOR);
   }
 
   const replHandler: FormEventHandler<HTMLFormElement> = (e) => {
@@ -44,6 +44,7 @@ function App() {
         onRun={clickHandler}
         onReset={resetApe}
         onRunSelected={selectedCodeHandler}
+        codeSelected={selectedCode !== ""}
       />
       <PanelGroup direction="vertical">
         <Panel>
@@ -54,7 +55,7 @@ function App() {
             theme={nightOwlInit()}
             extensions={[StreamLanguage.define(apeMode)]}
             onStatistics={(stats) => {
-              selectedCodeRef.current = stats.selectionCode;
+              setSelectedCode(stats.selectionCode.trim());
             }}
           />
         </Panel>

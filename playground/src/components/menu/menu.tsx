@@ -26,6 +26,7 @@ type MenuProps = {
   onRun: () => void;
   onRunSelected: () => void;
   onReset: () => void;
+  codeSelected: boolean;
 };
 
 const themeIcons = {
@@ -40,7 +41,12 @@ const themeNames = {
   [Theme.Dark]: "Dark",
 };
 
-export function Menu({ onRun, onRunSelected, onReset }: MenuProps) {
+export function Menu({
+  onRun,
+  onRunSelected,
+  onReset,
+  codeSelected,
+}: MenuProps) {
   const { theme, setTheme } = useTheme();
   const CurrentThemeIcon = themeIcons[theme];
 
@@ -65,9 +71,16 @@ export function Menu({ onRun, onRunSelected, onReset }: MenuProps) {
           <TooltipProvider delayDuration={500}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button onClick={onRunSelected} variant="outline" size="icon">
-                  <CursorTextIcon />
-                </Button>
+                <span>
+                  <Button
+                    onClick={onRunSelected}
+                    variant="outline"
+                    size="icon"
+                    disabled={!codeSelected}
+                  >
+                    <CursorTextIcon />
+                  </Button>
+                </span>
               </TooltipTrigger>
               <TooltipContent>
                 <p>Run selected code</p>
