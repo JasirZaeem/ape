@@ -184,6 +184,24 @@ var builtins = map[string]*object.Builtin{
 			return NULL
 		},
 	},
+	"init": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got = %d, want = 1", len(args))
+			}
+			if args[0].Type() != object.ARRAY_OBJ {
+				return newError("argument to `init` must be ARRAY, got %s", args[0].Type())
+			}
+			arr := args[0].(*object.Array)
+			length := len(arr.Elements)
+			if length > 0 {
+				newElements := make([]object.Object, length-1, length-1)
+				copy(newElements, arr.Elements[0:length-1])
+				return &object.Array{Elements: newElements}
+			}
+			return NULL
+		},
+	},
 	"push": {
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 2 {
@@ -314,6 +332,55 @@ var builtins = map[string]*object.Builtin{
 				newElements[i] = arr.Elements[length-i-1]
 			}
 			return &object.Array{Elements: newElements}
+		},
+	},
+	// Hash functions
+	"keys": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got = %d, want = 1", len(args))
+			}
+			if args[0].Type() != object.HASH_OBJ {
+				return newError("argument to `keys` must be HASH, got %s", args[0].Type())
+			}
+			hash := args[0].(*object.Hash)
+			keys := make([]object.Object, 0, len(hash.Pairs))
+			for _, pair := range hash.Pairs {
+				keys = append(keys, pair.Key)
+			}
+			return &object.Array{Elements: keys}
+		},
+	},
+	"values": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got = %d, want = 1", len(args))
+			}
+			if args[0].Type() != object.HASH_OBJ {
+				return newError("argument to `values` must be HASH, got %s", args[0].Type())
+			}
+			hash := args[0].(*object.Hash)
+			values := make([]object.Object, 0, len(hash.Pairs))
+			for _, pair := range hash.Pairs {
+				values = append(values, pair.Value)
+			}
+			return &object.Array{Elements: values}
+		},
+	},
+	"entries": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got = %d, want = 1", len(args))
+			}
+			if args[0].Type() != object.HASH_OBJ {
+				return newError("argument to `entries` must be HASH, got %s", args[0].Type())
+			}
+			hash := args[0].(*object.Hash)
+			entries := make([]object.Object, 0, len(hash.Pairs))
+			for _, pair := range hash.Pairs {
+				entries = append(entries, &object.Array{Elements: []object.Object{pair.Key, pair.Value}})
+			}
+			return &object.Array{Elements: entries}
 		},
 	},
 }
