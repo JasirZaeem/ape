@@ -42,11 +42,11 @@ function ReplHistoryItem({
   }, [hasCopied]);
 
   return (
-    <code className="whitespace-pre-wrap relative group hover:bg-accent h-7">
+    <code className="relative whitespace-pre-wrap group hover:bg-accent min-h-7 py-0.5">
       {order !== undefined && (
         <span
           className={cn(
-            "pr-2 inline-block text-right",
+            "pr-2 inline-block text-right self-start",
             inType ? "text-red-500" : "text-green-500"
           )}
         >
@@ -55,7 +55,7 @@ function ReplHistoryItem({
       )}
       {type === ApeCodeSource.EDITOR ? "<From Editor>" : value}
 
-      <span className="absolute right-0 invisible group-hover:visible">
+      <span className="absolute top-0 right-0 invisible group-hover:visible">
         {type === ApeCodeSource.REPL ? (
           <>
             <Button variant="default" className="h-6 w-6 p-0 m-0.5">

@@ -19,6 +19,9 @@ module.exports = {
       gridTemplateRows: {
         layout: "auto 1fr auto",
       },
+      minHeight: (theme) => ({
+        ...theme("spacing"),
+      }),
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
