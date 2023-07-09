@@ -19,7 +19,7 @@ function ReplHistoryItem({
 }: Omit<ApeInterpreterHistory, "id">) {
   const inType = IN_TYPES.includes(type);
   return (
-    <code>
+    <code className="whitespace-pre-wrap">
       {order !== undefined && (
         <span
           className={cn(
@@ -72,7 +72,7 @@ export function Repl({ history, replHandler }: ReplProps) {
       <h3 className="text-xl mb-2">Output:</h3>
 
       <ScrollArea ref={containerRef}>
-        <pre className="flex flex-col max-w-full h-full w-full text-base font-mono py-1">
+        <div className="flex flex-col max-w-full h-full w-full text-base font-mono py-1 break-all">
           {history.map(({ id, ...item }) => (
             <ReplHistoryItem key={id} {...item} />
           ))}
@@ -82,7 +82,7 @@ export function Repl({ history, replHandler }: ReplProps) {
               <Input className="inline w-full m-0 h-8 pl-10" name="repl-code" />
             </form>
           </code>
-        </pre>
+        </div>
       </ScrollArea>
     </div>
   );
