@@ -2,7 +2,7 @@ import { FormEventHandler, useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { StreamLanguage } from "@codemirror/language";
 import { nightOwlInit } from "@/editor/themes/night-owl.ts";
-import { fibApe } from "./codeExamples.ts";
+import { fibonacci } from "./codeExamples.ts";
 import { Separator } from "@/components/ui/separator.tsx";
 import { Repl } from "@/components/repl";
 import { ApeCodeSource, useApeInterpreter } from "@/hooks/useApe.ts";
@@ -13,7 +13,7 @@ import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 
 function App() {
   const { ready, history, runCode, resetApe } = useApeInterpreter();
-  const [code, setCode] = useState(fibApe);
+  const [code, setCode] = useState(fibonacci);
   const [selectedCode, setSelectedCode] = useState("");
 
   function clickHandler() {
@@ -46,6 +46,10 @@ function App() {
         onRunSelected={selectedCodeHandler}
         onClearCode={() => setCode("")}
         codeSelected={selectedCode !== ""}
+        onSelectExample={(code) => {
+          setCode(code);
+          setSelectedCode("");
+        }}
       />
       <PanelGroup direction="vertical">
         <Panel>

@@ -22,6 +22,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip.tsx";
+import { ExampleSelector } from "@/components/menu/exampleSelector.tsx";
 
 type MenuProps = {
   onRun: () => void;
@@ -29,6 +30,7 @@ type MenuProps = {
   onReset: () => void;
   onClearCode: () => void;
   codeSelected: boolean;
+  onSelectExample: (code: string) => void;
 };
 
 const themeIcons = {
@@ -49,6 +51,7 @@ export function Menu({
   onReset,
   onClearCode,
   codeSelected,
+  onSelectExample,
 }: MenuProps) {
   const { theme, setTheme } = useTheme();
   const CurrentThemeIcon = themeIcons[theme];
@@ -58,6 +61,8 @@ export function Menu({
       <nav className="px-8 flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
         <h2 className="text-lg font-semibold">Playground</h2>
         <div className="ml-auto flex w-full space-x-2 sm:justify-end">
+          <ExampleSelector onSelectExample={onSelectExample} />
+
           <TooltipProvider delayDuration={500}>
             <Tooltip>
               <TooltipTrigger asChild>
