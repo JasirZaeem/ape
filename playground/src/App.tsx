@@ -1,4 +1,4 @@
-import { FormEventHandler, useState } from "react";
+import { useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { StreamLanguage } from "@codemirror/language";
 import { nightOwlInit } from "@/editor/themes/night-owl.ts";
@@ -12,38 +12,16 @@ import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 
 function App() {
-  const { ready, history, runCode, resetApe } = useApeInterpreter();
+  const { history, runCode, resetApe } = useApeInterpreter();
   const [code, setCode] = useState(fibonacci);
   const [selectedCode, setSelectedCode] = useState("");
-
-  function clickHandler() {
-    if (!ready) return;
-    runCode(code, ApeCodeSource.EDITOR);
-  }
-
-  function selectedCodeHandler() {
-    if (!ready) return;
-    runCode(selectedCode, ApeCodeSource.EDITOR);
-  }
-
-  const replHandler: FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    // Get data from form
-    // @ts-ignore
-    const replCode = e.target["repl-code"].value as string;
-    if (ready && replCode) {
-      runCode(replCode, ApeCodeSource.REPL);
-      // @ts-ignore
-      e.target["repl-code"].value = "";
-    }
-  };
 
   return (
     <div className="bg-background h-full max-h-full grid grid-rows-layout w-full max-w-full overflow-hidden">
       <Menu
-        onRun={clickHandler}
+        onRun={() => runCode(code, ApeCodeSource.EDITOR)}
         onReset={resetApe}
-        onRunSelected={selectedCodeHandler}
+        onRunSelected={() => runCode(selectedCode, ApeCodeSource.EDITOR)}
         onClearCode={() => setCode("")}
         codeSelected={selectedCode !== ""}
         onSelectExample={(code) => {
@@ -68,7 +46,10 @@ function App() {
           <DotsHorizontalIcon className="absolute my-auto -translate-y-1/4 invisible group-hover:visible" />
         </PanelResizeHandle>
         <Panel>
-          <Repl history={history} replHandler={replHandler} />
+          <Repl
+            history={history}
+            onRunCode={(code) => runCode(code, ApeCodeSource.REPL)}
+          />
         </Panel>
       </PanelGroup>
 

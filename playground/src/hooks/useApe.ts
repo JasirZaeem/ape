@@ -93,8 +93,13 @@ export function useApeInterpreter() {
         { type: source, value: code, order, id: results.length },
       ]);
       // runApeProgram global function is injected by Go
-      // @ts-ignore
-      const result = runApeProgram(code) as ApeResult;
+      const result = ready
+        ? // @ts-ignore
+          (runApeProgram(code) as ApeResult)
+        : {
+            type: ApeResultType.WASM_ERROR,
+            value: "Interpreter not ready",
+          };
       setHistory((results) => [
         ...results,
         { ...result, order, id: results.length },
