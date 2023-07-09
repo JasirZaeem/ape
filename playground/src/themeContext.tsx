@@ -59,6 +59,27 @@ export const ThemeProvider = ({
     documentElement.classList.add(theme);
   }, [theme]);
 
+  useEffect(() => {
+    function handleThemeChange(event: MediaQueryListEvent) {
+      if (theme === Theme.System) {
+        document.documentElement.classList.remove("dark", "light");
+        document.documentElement.classList.add(
+          event.matches ? "dark" : "light"
+        );
+      }
+    }
+
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", handleThemeChange);
+
+    return () => {
+      window
+        .matchMedia("(prefers-color-scheme: dark)")
+        .removeEventListener("change", handleThemeChange);
+    };
+  }, []);
+
   const value = {
     theme,
     setTheme: (theme: Theme) => {
