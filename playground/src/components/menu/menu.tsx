@@ -66,7 +66,12 @@ export function Menu({
           <TooltipProvider delayDuration={500}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button onClick={onRun} variant="default" size="icon">
+                <Button
+                  onClick={onRun}
+                  variant="default"
+                  size="icon"
+                  className="bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800"
+                >
                   <PlayIcon />
                 </Button>
               </TooltipTrigger>
