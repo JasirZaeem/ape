@@ -58,16 +58,16 @@ function ReplHistoryItem({
       <span className="absolute top-0 right-0 invisible group-hover:visible">
         {type === ApeCodeSource.REPL ? (
           <>
-            <Button variant="default" className="h-6 w-6 p-0 m-0.5">
+            <Button variant="outline" className="h-6 w-6 p-0 m-0.5">
               <PlayIcon onClick={() => onRunCode(value)} />
             </Button>
-            <Button variant="default" className="h-6 w-6 p-0 m-0.5">
+            <Button variant="outline" className="h-6 w-6 p-0 m-0.5">
               <Pencil1Icon onClick={() => setReplInput(value)} />
             </Button>
           </>
         ) : null}
         <Button
-          variant="default"
+          variant="outline"
           className="h-6 w-6 p-0 m-0.5 mr-4"
           onClick={() => {
             navigator.clipboard.writeText(value).then(() => setHasCopied(true));
