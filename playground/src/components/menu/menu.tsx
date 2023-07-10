@@ -59,7 +59,12 @@ export function Menu({
   return (
     <div>
       <nav className="px-8 flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
-        <h2 className="text-lg font-semibold">Playground</h2>
+        <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white md:text-3xl lg:text-4xl w-full">
+          <span className="text-transparent bg-clip-text bg-gradient-to-br from-pink-500 to-orange-400">
+            Ape
+          </span>{" "}
+          Playground
+        </h1>
         <div className="ml-auto flex w-full space-x-2 sm:justify-end">
           <ExampleSelector onSelectExample={onSelectExample} />
 
