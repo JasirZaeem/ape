@@ -32,8 +32,7 @@ export const factorial = `let fact = fn (n) {
 fact(5)
 `;
 
-export const arrayExamples = `
-let arr = [1, 2, 3, 4, 5];
+export const arrayExamples = `let arr = [1, 2, 3, 4, 5];
 print("arr == ", arr);
 
 print("arr[0] == ", arr[0]);
