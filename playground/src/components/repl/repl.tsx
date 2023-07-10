@@ -21,7 +21,7 @@ const IN_TYPES: string[] = [ApeCodeSource.EDITOR, ApeCodeSource.REPL];
 
 type ReplHistoryItemProps = Omit<ApeInterpreterHistory, "id"> & {
   onRunCode: (code: string) => void;
-  setReplInput: (value: string) => void;
+  onEdit: (value: string) => void;
 };
 
 function ReplHistoryItem({
@@ -29,7 +29,7 @@ function ReplHistoryItem({
   type,
   value,
   onRunCode,
-  setReplInput,
+  onEdit,
 }: ReplHistoryItemProps) {
   const inType = IN_TYPES.includes(type);
   const [hasCopied, setHasCopied] = useState(false);
@@ -62,7 +62,7 @@ function ReplHistoryItem({
               <PlayIcon onClick={() => onRunCode(value)} />
             </Button>
             <Button variant="outline" className="h-6 w-6 p-0 m-0.5">
-              <Pencil1Icon onClick={() => setReplInput(value)} />
+              <Pencil1Icon onClick={() => onEdit(value)} />
             </Button>
           </>
         ) : null}
@@ -84,6 +84,7 @@ export function Repl({ history, onRunCode }: ReplProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const autoScroll = useRef(true);
   const [replInput, setReplInput] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (containerRef.current && autoScroll.current) {
@@ -133,7 +134,10 @@ export function Repl({ history, onRunCode }: ReplProps) {
               key={id}
               {...item}
               onRunCode={onRunCode}
-              setReplInput={setReplInput}
+              onEdit={() => {
+                setReplInput(item.value);
+                inputRef.current?.focus();
+              }}
             />
           ))}
           <code className="relative">
@@ -144,6 +148,7 @@ export function Repl({ history, onRunCode }: ReplProps) {
                 name="repl-code"
                 value={replInput}
                 onChange={(e) => setReplInput(e.target.value)}
+                ref={inputRef}
               />
             </form>
           </code>
