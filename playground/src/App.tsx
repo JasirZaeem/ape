@@ -12,9 +12,16 @@ import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 
 function App() {
-  const { history, runCode, resetApe } = useApeInterpreter();
+  const { history, runCode, formatCode, resetApe } = useApeInterpreter();
   const [code, setCode] = useState(fibonacci);
   const [selectedCode, setSelectedCode] = useState("");
+
+  function codeFormatHandler() {
+    const result = formatCode(code);
+    if (result.type === "FORMATTED") {
+      setCode(result.value);
+    }
+  }
 
   return (
     <div className="bg-background h-full max-h-full grid grid-rows-layout w-full max-w-full overflow-hidden">
@@ -22,6 +29,7 @@ function App() {
         onRun={() => runCode(code, ApeCodeSource.EDITOR)}
         onReset={resetApe}
         onRunSelected={() => runCode(selectedCode, ApeCodeSource.EDITOR)}
+        onFormat={codeFormatHandler}
         onClearCode={() => setCode("")}
         codeSelected={selectedCode !== ""}
         onSelectExample={(code) => {

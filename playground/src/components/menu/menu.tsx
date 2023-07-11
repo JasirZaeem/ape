@@ -6,6 +6,7 @@ import {
   PlayIcon,
   ResetIcon,
   SunIcon,
+  TextAlignLeftIcon,
   TrashIcon,
 } from "@radix-ui/react-icons";
 import { Separator } from "@/components/ui/separator.tsx";
@@ -27,6 +28,7 @@ import { ExampleSelector } from "@/components/menu/exampleSelector.tsx";
 type MenuProps = {
   onRun: () => void;
   onRunSelected: () => void;
+  onFormat: () => void;
   onReset: () => void;
   onClearCode: () => void;
   codeSelected: boolean;
@@ -48,6 +50,7 @@ const themeNames = {
 export function Menu({
   onRun,
   onRunSelected,
+  onFormat,
   onReset,
   onClearCode,
   codeSelected,
@@ -102,6 +105,21 @@ export function Menu({
               </TooltipTrigger>
               <TooltipContent>
                 <p>Run selected code</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider delayDuration={500}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span>
+                  <Button onClick={onFormat} variant="outline" size="icon">
+                    <TextAlignLeftIcon />
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Format code</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
