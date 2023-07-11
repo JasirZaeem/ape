@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/JasirZaeem/ape/evaluator"
 	"github.com/JasirZaeem/ape/object"
+	"github.com/JasirZaeem/ape/pkg/format"
 	"github.com/JasirZaeem/ape/pkg/lexer"
 	"github.com/JasirZaeem/ape/pkg/parser"
 	"strings"
@@ -61,9 +62,36 @@ func Reset(this js.Value, args []js.Value) interface{} {
 	return nil
 }
 
+func Format(this js.Value, args []js.Value) interface{} {
+	if len(args) != 1 {
+		return fmt.Sprintf("wrong number of arguments. got = %d, want = 1", len(args))
+	}
+
+	code := args[0].String()
+
+	l := lexer.New(code)
+	p := parser.New(l)
+
+	program := p.ParseProgram()
+	if len(p.Errors()) != 0 {
+		return map[string]interface{}{
+			"type":  "PARSER_ERROR",
+			"value": strings.Join(p.Errors(), "\n"),
+		}
+	}
+
+	formatter := format.New()
+	formatter.Format(program)
+	return map[string]interface{}{
+		"type":  "FORMATTED",
+		"value": formatter.String(),
+	}
+}
+
 func RegisterCallbacks() {
 	js.Global().Set("runApeProgram", js.FuncOf(Run))
 	js.Global().Set("resetApeEnvironment", js.FuncOf(Reset))
+	js.Global().Set("formatApeProgram", js.FuncOf(Format))
 }
 
 func main() {
