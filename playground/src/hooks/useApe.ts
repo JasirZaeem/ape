@@ -6,7 +6,7 @@ export enum ApeResultType {
 
   // Errors
   ERROR = "ERROR",
-  PARSE_ERROR = "PARSE_ERROR",
+  PARSER_ERROR = "PARSER_ERROR",
   WASM_ERROR = "WASM_ERROR",
 
   // Value types
@@ -105,6 +105,21 @@ export function useApeInterpreter() {
         { ...result, order, id: results.length },
       ]);
       return result;
+    },
+    formatCode: (
+      code: string
+    ): {
+      type: ApeResultType.PARSER_ERROR | "FORMATTED";
+      value: string;
+    } => {
+      // formatApeCode global function is injected by Go
+      // @ts-ignore
+      const res = formatApeProgram(code);
+      if (res.type === ApeResultType.PARSER_ERROR) {
+        setHistory((results) => [...results, { ...res, id: results.length }]);
+        return res;
+      }
+      return res;
     },
     resetApe: () => {
       // resetApeEnvironment global function is injected by Go
