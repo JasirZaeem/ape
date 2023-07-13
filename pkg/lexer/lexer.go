@@ -3,6 +3,7 @@ package lexer
 import (
 	"bytes"
 	"github.com/JasirZaeem/ape/pkg/token"
+	"strings"
 )
 
 type Lexer struct {
@@ -13,7 +14,7 @@ type Lexer struct {
 }
 
 func New(input string) *Lexer {
-	l := &Lexer{input: input}
+	l := &Lexer{input: strings.TrimSpace(input)}
 	l.readChar()
 	return l
 }
@@ -96,6 +97,14 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.RBRACKET, l.ch)
 	case ':':
 		tok = newToken(token.COLON, l.ch)
+	case '\n':
+		l.readChar()
+		l.skipWhitespace()
+		if l.ch == '\n' {
+			return newToken(token.EMPTY_LINE, l.ch)
+		} else {
+			return l.NextToken()
+		}
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
@@ -155,7 +164,7 @@ func isDigit(ch byte) bool {
 }
 
 func (l *Lexer) skipWhitespace() {
-	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
+	for l.ch == ' ' || l.ch == '\t' {
 		l.readChar()
 	}
 }
