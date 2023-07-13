@@ -81,10 +81,9 @@ func Format(this js.Value, args []js.Value) interface{} {
 	}
 
 	formatter := format.New()
-	formatter.Format(program)
 	return map[string]interface{}{
 		"type":  "FORMATTED",
-		"value": formatter.String(),
+		"value": formatter.Format(program),
 	}
 }
 
