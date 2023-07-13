@@ -25,7 +25,9 @@ func New() *Formatter {
 func (f *Formatter) Format(program *ast.Program) string {
 	for _, statement := range program.Statements {
 		f.formatStatement(&statement)
-		f.buffer.WriteByte('\n')
+		if _, ok := statement.(*ast.EmptyStatement); !ok && f.buffer.Len() > 0 {
+			f.buffer.WriteByte('\n')
+		}
 	}
 	return f.buffer.String()
 }
@@ -37,19 +39,21 @@ func (f *Formatter) writeIndent() {
 }
 
 func (f *Formatter) formatStatement(statement *ast.Statement) {
-
-	f.writeIndent()
-
 	switch statement := (*statement).(type) {
 	case *ast.LetStatement:
+		f.writeIndent()
 		f.formatLetStatement(statement)
 	case *ast.ReturnStatement:
+		f.writeIndent()
 		f.formatReturnStatement(statement)
 	case *ast.ExpressionStatement:
+		f.writeIndent()
 		f.formatExpressionStatement(statement)
 	case *ast.BlockStatement:
+		f.writeIndent()
 		f.formatBlockStatement(statement)
-
+	case *ast.EmptyStatement:
+		f.formatEmptyStatement()
 	}
 }
 
@@ -77,9 +81,18 @@ func (f *Formatter) formatBlockStatement(blockStatement *ast.BlockStatement) {
 	f.indentation++
 	for _, statement := range blockStatement.Statements {
 		f.formatStatement(&statement)
-		f.buffer.WriteByte('\n')
+		if _, ok := statement.(*ast.EmptyStatement); !ok && f.buffer.Len() > 0 {
+			f.buffer.WriteByte('\n')
+		}
 	}
 	f.indentation--
+}
+
+func (f *Formatter) formatEmptyStatement() {
+	if f.buffer.Len() > 1 &&
+		!(f.buffer.Bytes()[f.buffer.Len()-2] == '\n' && f.buffer.Bytes()[f.buffer.Len()-1] == '\n') {
+		f.buffer.WriteByte('\n')
+	}
 }
 
 func (f *Formatter) formatExpression(expression *ast.Expression, precedence int) {
