@@ -21,8 +21,8 @@ func TestFunctionPrefixExpressionFormat(t *testing.T) {
 		input    string
 		expected string
 	}{
-		{"- 5", "-5;"},
-		{"! 5", "!5;"},
+		{"- 5", "-5;\n"},
+		{"! 5", "!5;\n"},
 	}
 
 	for _, tt := range input {
@@ -64,6 +64,43 @@ return x + y;
     fib(n - 1) + fib(n - 2);
   };
 };
+`,
+		},
+		{
+			"\n\n\n\nlet a\n = b",
+			"let a = b;\n",
+		},
+		{
+			"let a = b\n\n\n\n",
+			"let a = b;\n",
+		},
+		{
+			"let a = b\n\n\n\nlet c = d",
+			"let a = b;\n\nlet c = d;\n",
+		},
+		{
+			`let hanoi = fn(n, a, b, c) {
+  if (n > 0) {
+    hanoi(n - 1, a, c, b);
+    
+    print(a, "->", c);
+    hanoi(n - 1, b, a, c);
+  };
+};
+
+
+hanoi(3, "A", "B", "C");
+`,
+			`let hanoi = fn(n, a, b, c) {
+  if (n > 0) {
+    hanoi(n - 1, a, c, b);
+
+    print(a, "->", c);
+    hanoi(n - 1, b, a, c);
+  };
+};
+
+hanoi(3, "A", "B", "C");
 `,
 		},
 	}
