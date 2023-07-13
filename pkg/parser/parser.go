@@ -120,6 +120,8 @@ func (p *Parser) parseStatement() ast.Statement {
 		return p.parseLetStatement()
 	case token.RETURN:
 		return p.parseReturnStatement()
+	case token.EMPTY_LINE:
+		return p.parseEmptyStatement()
 	default:
 		return p.parseExpressionStatement()
 	}
@@ -192,6 +194,13 @@ func (p *Parser) parseBlockStatement() *ast.BlockStatement {
 	}
 
 	return block
+}
+
+func (p *Parser) parseEmptyStatement() *ast.EmptyStatement {
+	for p.peekTokenIs(token.EMPTY_LINE) {
+		p.nextToken()
+	}
+	return &ast.EmptyStatement{Token: p.curToken}
 }
 
 func (p *Parser) parseExpression(precedence int) ast.Expression {
