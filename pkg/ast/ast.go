@@ -119,6 +119,14 @@ func (bs *BlockStatement) String() string {
 	return out.String()
 }
 
+type EmptyStatement struct {
+	Token token.Token
+}
+
+func (es *EmptyStatement) statementNode()       {}
+func (es *EmptyStatement) TokenLiteral() string { return es.Token.Literal }
+func (es *EmptyStatement) String() string       { return "" }
+
 type Identifier struct {
 	Token token.Token
 	Value string
