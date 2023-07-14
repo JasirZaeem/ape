@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/JasirZaeem/ape/evaluator"
 	"github.com/JasirZaeem/ape/object"
@@ -87,10 +88,43 @@ func Format(this js.Value, args []js.Value) interface{} {
 	}
 }
 
+func JsonAst(this js.Value, args []js.Value) interface{} {
+	if len(args) != 1 {
+		return fmt.Sprintf("wrong number of arguments. got = %d, want = 1", len(args))
+	}
+
+	code := args[0].String()
+
+	l := lexer.New(code)
+	p := parser.New(l)
+
+	program := p.ParseProgram()
+	if len(p.Errors()) != 0 {
+		return map[string]interface{}{
+			"type":  "PARSER_ERROR",
+			"value": strings.Join(p.Errors(), "\n"),
+		}
+	}
+
+	astJson, err := json.MarshalIndent(program, "", "  ")
+	if err != nil {
+		return map[string]interface{}{
+			"type":  "JSON_ERROR",
+			"value": err.Error(),
+		}
+	}
+
+	return map[string]interface{}{
+		"type":  "JSON_AST",
+		"value": string(astJson),
+	}
+}
+
 func RegisterCallbacks() {
 	js.Global().Set("runApeProgram", js.FuncOf(Run))
 	js.Global().Set("resetApeEnvironment", js.FuncOf(Reset))
 	js.Global().Set("formatApeProgram", js.FuncOf(Format))
+	js.Global().Set("getApeAst", js.FuncOf(JsonAst))
 }
 
 func main() {
