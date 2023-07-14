@@ -127,13 +127,15 @@ export function useApeInterpreter() {
     },
     getAst: (
       code: string
-    ): {
-      type:
-        | ApeResultType.PARSER_ERROR
-        | ApeResultType.JSON_ERROR
-        | ApeResultType.JSON_AST;
-      value: string;
-    } => {
+    ):
+      | {
+          type: ApeResultType.PARSER_ERROR | ApeResultType.JSON_ERROR;
+          value: string;
+        }
+      | {
+          type: ApeResultType.JSON_AST;
+          value: unknown;
+        } => {
       // getApesAst global function is injected by Go
       // @ts-ignore
       const res = getApeAst(code);
@@ -141,7 +143,15 @@ export function useApeInterpreter() {
         setHistory((results) => [...results, { ...res, id: results.length }]);
         return res;
       }
-      return res;
+      try {
+        const ast = JSON.parse(res.value);
+        return { type: ApeResultType.JSON_AST, value: ast };
+      } catch (e) {
+        return {
+          type: ApeResultType.JSON_ERROR,
+          value: "Failed to parse JSON",
+        };
+      }
     },
     resetApe: () => {
       // resetApeEnvironment global function is injected by Go
