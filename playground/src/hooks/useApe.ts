@@ -36,6 +36,21 @@ export type ApeResult = {
   value: string;
 };
 
+export type FormatCodeResult = {
+  type: ApeResultType.PARSER_ERROR | "FORMATTED";
+  value: string;
+};
+
+export type GetAstResult =
+  | {
+      type: ApeResultType.JSON_AST;
+      value: unknown;
+    }
+  | {
+      type: ApeResultType.JSON_ERROR | ApeResultType.PARSER_ERROR;
+      value: string;
+    };
+
 export type ApeInterpreterHistory = {
   type: ApeResultType | ApeCodeSource;
   value: string;
@@ -110,12 +125,7 @@ export function useApeInterpreter() {
       ]);
       return result;
     },
-    formatCode: (
-      code: string
-    ): {
-      type: ApeResultType.PARSER_ERROR | "FORMATTED";
-      value: string;
-    } => {
+    formatCode: (code: string): FormatCodeResult => {
       // formatApeCode global function is injected by Go
       // @ts-ignore
       const res = formatApeProgram(code);
@@ -125,18 +135,7 @@ export function useApeInterpreter() {
       }
       return res;
     },
-    getAst: (
-      code: string,
-      logErrors: boolean = false
-    ):
-      | {
-          type: ApeResultType.PARSER_ERROR | ApeResultType.JSON_ERROR;
-          value: string;
-        }
-      | {
-          type: ApeResultType.JSON_AST;
-          value: unknown;
-        } => {
+    getAst: (code: string, logErrors: boolean = false): GetAstResult => {
       // getApesAst global function is injected by Go
       // @ts-ignore
       const res = getApeAst(code);
