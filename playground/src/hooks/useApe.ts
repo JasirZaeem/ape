@@ -20,6 +20,10 @@ export enum ApeResultType {
 
   // Stdout added by hijacked console.log
   STDOUT = "STDOUT",
+
+  // Json Ast
+  JSON_ERROR = "JSON_ERROR",
+  JSON_AST = "JSON_AST",
 }
 
 export enum ApeCodeSource {
@@ -116,6 +120,24 @@ export function useApeInterpreter() {
       // @ts-ignore
       const res = formatApeProgram(code);
       if (res.type === ApeResultType.PARSER_ERROR) {
+        setHistory((results) => [...results, { ...res, id: results.length }]);
+        return res;
+      }
+      return res;
+    },
+    getAst: (
+      code: string
+    ): {
+      type:
+        | ApeResultType.PARSER_ERROR
+        | ApeResultType.JSON_ERROR
+        | ApeResultType.JSON_AST;
+      value: string;
+    } => {
+      // getApesAst global function is injected by Go
+      // @ts-ignore
+      const res = getApeAst(code);
+      if (res.type !== ApeResultType.JSON_AST) {
         setHistory((results) => [...results, { ...res, id: results.length }]);
         return res;
       }
