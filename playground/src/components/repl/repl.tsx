@@ -11,11 +11,7 @@ import { ApeCodeSource, ApeInterpreterHistory } from "@/hooks/useApe.ts";
 import { cn } from "@/lib/utils.ts";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { Button } from "@/components/ui/button.tsx";
-
-type ReplProps = {
-  history: ApeInterpreterHistory[];
-  onRunCode: (code: string) => void;
-};
+import { useApe } from "@/apeContext.tsx";
 
 const IN_TYPES: string[] = [ApeCodeSource.EDITOR, ApeCodeSource.REPL];
 
@@ -80,11 +76,12 @@ function ReplHistoryItem({
   );
 }
 
-export function Repl({ history, onRunCode }: ReplProps) {
+export function Repl() {
   const containerRef = useRef<HTMLDivElement>(null);
   const autoScroll = useRef(true);
   const [replInput, setReplInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const { history, runCode } = useApe();
 
   useEffect(() => {
     if (containerRef.current && autoScroll.current) {
@@ -119,7 +116,7 @@ export function Repl({ history, onRunCode }: ReplProps) {
     // Get data from form
     // @ts-ignore
     const replCode = e.target["repl-code"].value as string;
-    onRunCode(replCode);
+    runCode(replCode, ApeCodeSource.REPL);
     setReplInput("");
   };
 
@@ -133,7 +130,7 @@ export function Repl({ history, onRunCode }: ReplProps) {
             <ReplHistoryItem
               key={id}
               {...item}
-              onRunCode={onRunCode}
+              onRunCode={(code) => runCode(code, ApeCodeSource.REPL)}
               onEdit={() => {
                 setReplInput(item.value);
                 inputRef.current?.focus();

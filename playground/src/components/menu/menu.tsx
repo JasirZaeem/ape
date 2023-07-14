@@ -25,17 +25,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip.tsx";
 import { ExampleSelector } from "@/components/menu/exampleSelector.tsx";
-
-type MenuProps = {
-  onRun: () => void;
-  onRunSelected: () => void;
-  onFormat: () => void;
-  onGetAst: () => void;
-  onReset: () => void;
-  onClearCode: () => void;
-  codeSelected: boolean;
-  onSelectExample: (code: string) => void;
-};
+import { ApeCodeSource, ApeResultType } from "@/hooks/useApe.ts";
+import { useApe } from "@/apeContext.tsx";
 
 const themeIcons = {
   [Theme.System]: DesktopIcon,
@@ -49,18 +40,34 @@ const themeNames = {
   [Theme.Dark]: "Dark",
 };
 
-export function Menu({
-  onRun,
-  onRunSelected,
-  onFormat,
-  onGetAst,
-  onReset,
-  onClearCode,
-  codeSelected,
-  onSelectExample,
-}: MenuProps) {
+export function Menu() {
   const { theme, setTheme } = useTheme();
   const CurrentThemeIcon = themeIcons[theme];
+
+  const {
+    code,
+    setCode,
+    setAstNow,
+    formatCode,
+    selectedCode,
+    getAst,
+    runCode,
+    resetApe,
+  } = useApe();
+
+  function codeFormatHandler() {
+    const result = formatCode(code);
+    if (result.type === "FORMATTED") {
+      setCode(result.value);
+    }
+  }
+
+  function getAstHandler() {
+    const result = getAst(code);
+    if (result.type === ApeResultType.JSON_AST) {
+      setAstNow(result.value);
+    }
+  }
 
   return (
     <div>
@@ -72,13 +79,17 @@ export function Menu({
           Playground
         </h1>
         <div className="ml-auto flex w-full space-x-2 sm:justify-end">
-          <ExampleSelector onSelectExample={onSelectExample} />
+          <ExampleSelector
+            onSelectExample={(code) => {
+              setCode(code);
+            }}
+          />
 
           <TooltipProvider delayDuration={500}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  onClick={onRun}
+                  onClick={() => runCode(code, ApeCodeSource.EDITOR)}
                   variant="default"
                   size="icon"
                   className="bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800"
@@ -97,10 +108,10 @@ export function Menu({
               <TooltipTrigger asChild>
                 <span>
                   <Button
-                    onClick={onRunSelected}
+                    onClick={() => runCode(selectedCode, ApeCodeSource.EDITOR)}
                     variant="outline"
                     size="icon"
-                    disabled={!codeSelected}
+                    disabled={selectedCode === ""}
                   >
                     <CursorTextIcon />
                   </Button>
@@ -116,7 +127,11 @@ export function Menu({
             <Tooltip>
               <TooltipTrigger asChild>
                 <span>
-                  <Button onClick={onFormat} variant="outline" size="icon">
+                  <Button
+                    onClick={codeFormatHandler}
+                    variant="outline"
+                    size="icon"
+                  >
                     <TextAlignLeftIcon />
                   </Button>
                 </span>
@@ -130,7 +145,7 @@ export function Menu({
           <TooltipProvider delayDuration={500}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button onClick={onReset} variant="outline" size="icon">
+                <Button onClick={resetApe} variant="outline" size="icon">
                   <ResetIcon />
                 </Button>
               </TooltipTrigger>
@@ -147,7 +162,7 @@ export function Menu({
           <TooltipProvider delayDuration={500}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button onClick={onGetAst} variant="outline" size="icon">
+                <Button onClick={getAstHandler} variant="outline" size="icon">
                   <EyeOpenIcon />
                 </Button>
               </TooltipTrigger>
@@ -160,7 +175,11 @@ export function Menu({
           <TooltipProvider delayDuration={500}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button onClick={onClearCode} variant="outline" size="icon">
+                <Button
+                  onClick={() => setCode("")}
+                  variant="outline"
+                  size="icon"
+                >
                   <TrashIcon />
                 </Button>
               </TooltipTrigger>
