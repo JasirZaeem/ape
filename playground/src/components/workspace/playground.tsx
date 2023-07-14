@@ -1,10 +1,29 @@
-import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import {
+  ImperativePanelHandle,
+  Panel,
+  PanelGroup,
+  PanelResizeHandle,
+} from "react-resizable-panels";
 import { DotsHorizontalIcon, DotsVerticalIcon } from "@radix-ui/react-icons";
 import { Repl } from "@/components/repl";
 import { Editor } from "@/components/workspace/editor.tsx";
 import { AstViewer } from "@/components/workspace/astViewer.tsx";
+import { useEffect, useRef } from "react";
+import { useApe } from "@/apeContext.tsx";
 
 export function Playground() {
+  const astPanelRef = useRef<ImperativePanelHandle>(null);
+
+  const { astViewerVisible } = useApe();
+
+  useEffect(() => {
+    if (!astViewerVisible) {
+      astPanelRef.current?.collapse();
+    } else {
+      astPanelRef.current?.expand();
+    }
+  }, [astViewerVisible]);
+
   return (
     <PanelGroup direction="vertical">
       <Panel>
@@ -15,7 +34,7 @@ export function Playground() {
           <PanelResizeHandle className="relative flex flex-col justify-center align-middle group bg-border w-2">
             <DotsVerticalIcon className="absolute mx-auto -translate-x-1/4 invisible group-hover:visible" />
           </PanelResizeHandle>
-          <Panel>
+          <Panel collapsible ref={astPanelRef}>
             <AstViewer />
           </Panel>
         </PanelGroup>

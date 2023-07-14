@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button.tsx";
 import {
   CursorTextIcon,
   DesktopIcon,
+  EyeClosedIcon,
   EyeOpenIcon,
   MoonIcon,
   PlayIcon,
@@ -53,6 +54,8 @@ export function Menu() {
     getAst,
     runCode,
     resetApe,
+    astViewerVisible,
+    setAstViewerVisible,
   } = useApe();
 
   function codeFormatHandler() {
@@ -63,6 +66,12 @@ export function Menu() {
   }
 
   function getAstHandler() {
+    if (astViewerVisible) {
+      setAstViewerVisible(false);
+      return;
+    }
+
+    setAstViewerVisible(true);
     const result = getAst(code);
     if (result.type === ApeResultType.JSON_AST) {
       setAstNow(result.value);
@@ -163,11 +172,13 @@ export function Menu() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button onClick={getAstHandler} variant="outline" size="icon">
-                  <EyeOpenIcon />
+                  {astViewerVisible ? <EyeClosedIcon /> : <EyeOpenIcon />}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p className="text-center">Show AST</p>
+                <p className="text-center">
+                  {astViewerVisible ? "Hide" : "Show"} AST
+                </p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

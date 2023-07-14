@@ -30,6 +30,8 @@ type ApeContextType = {
   setAstNow: Dispatch<SetStateAction<unknown>>;
   selectedCode: string;
   setSelectedCode: Dispatch<SetStateAction<string>>;
+  astViewerVisible: boolean;
+  setAstViewerVisible: Dispatch<SetStateAction<boolean>>;
 };
 
 const ApeContext = createContext<ApeContextType>({
@@ -45,6 +47,8 @@ const ApeContext = createContext<ApeContextType>({
   setAstNow: () => {},
   selectedCode: "",
   setSelectedCode: () => {},
+  astViewerVisible: false,
+  setAstViewerVisible: () => {},
 });
 
 export function ApeProvider({ children }: { children: ReactNode }) {
@@ -53,6 +57,7 @@ export function ApeProvider({ children }: { children: ReactNode }) {
   const [code, setCode] = useState(fibonacci);
   const [ast, setDebouncedAst, setAstNow] = useDebouncedState<unknown>({}, 200);
   const [selectedCode, setSelectedCode] = useState("");
+  const [astViewerVisible, setAstViewerVisible] = useState(false);
 
   return (
     <ApeContext.Provider
@@ -69,6 +74,8 @@ export function ApeProvider({ children }: { children: ReactNode }) {
         setAstNow,
         selectedCode,
         setSelectedCode,
+        astViewerVisible,
+        setAstViewerVisible,
       }}
     >
       {children}
