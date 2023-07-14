@@ -61,22 +61,10 @@ func TestJSONMarshalling(t *testing.T) {
 	output := `{
   "Statements": [
     {
-      "Token": {
-        "Type": "LET",
-        "Literal": "let"
-      },
-      "Name": {
-        "Token": {
-          "Type": "IDENT",
-          "Literal": "y"
-        },
-        "Value": "y"
-      },
+      "Type": "LetStatement",
+      "Name": "y",
       "Value": {
-        "Token": {
-          "Type": "INT",
-          "Literal": "10"
-        },
+        "Type": "IntegerLiteral",
         "Value": 10
       }
     }
