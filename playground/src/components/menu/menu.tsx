@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button.tsx";
 import {
   CursorTextIcon,
   DesktopIcon,
+  EyeOpenIcon,
   MoonIcon,
   PlayIcon,
   ResetIcon,
@@ -29,6 +30,7 @@ type MenuProps = {
   onRun: () => void;
   onRunSelected: () => void;
   onFormat: () => void;
+  onGetAst: () => void;
   onReset: () => void;
   onClearCode: () => void;
   codeSelected: boolean;
@@ -51,6 +53,7 @@ export function Menu({
   onRun,
   onRunSelected,
   onFormat,
+  onGetAst,
   onReset,
   onClearCode,
   codeSelected,
@@ -137,6 +140,19 @@ export function Menu({
                   <br />
                   (removes all set variables)
                 </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider delayDuration={500}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button onClick={onGetAst} variant="outline" size="icon">
+                  <EyeOpenIcon />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-center">Show AST</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

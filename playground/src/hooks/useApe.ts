@@ -126,7 +126,8 @@ export function useApeInterpreter() {
       return res;
     },
     getAst: (
-      code: string
+      code: string,
+      logErrors: boolean = false
     ):
       | {
           type: ApeResultType.PARSER_ERROR | ApeResultType.JSON_ERROR;
@@ -140,7 +141,8 @@ export function useApeInterpreter() {
       // @ts-ignore
       const res = getApeAst(code);
       if (res.type !== ApeResultType.JSON_AST) {
-        setHistory((results) => [...results, { ...res, id: results.length }]);
+        logErrors &&
+          setHistory((results) => [...results, { ...res, id: results.length }]);
         return res;
       }
       try {
