@@ -2,6 +2,7 @@ package ast
 
 import (
 	"bytes"
+	"encoding/json"
 	"github.com/JasirZaeem/ape/pkg/token"
 	"strings"
 )
@@ -66,6 +67,17 @@ func (ls *LetStatement) String() string {
 
 	return out.String()
 }
+func (ls *LetStatement) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Type  string
+		Name  string
+		Value Expression
+	}{
+		Type:  "LetStatement",
+		Name:  ls.Name.String(),
+		Value: ls.Value,
+	})
+}
 
 type ReturnStatement struct {
 	Token       token.Token
@@ -87,6 +99,15 @@ func (rs *ReturnStatement) String() string {
 
 	return out.String()
 }
+func (rs *ReturnStatement) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Type        string
+		ReturnValue Expression
+	}{
+		Type:        "ReturnStatement",
+		ReturnValue: rs.ReturnValue,
+	})
+}
 
 type ExpressionStatement struct {
 	Token      token.Token
@@ -100,6 +121,15 @@ func (es *ExpressionStatement) String() string {
 		return es.Expression.String()
 	}
 	return ""
+}
+func (es *ExpressionStatement) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Type       string
+		Expression Expression
+	}{
+		Type:       "ExpressionStatement",
+		Expression: es.Expression,
+	})
 }
 
 type BlockStatement struct {
@@ -118,6 +148,15 @@ func (bs *BlockStatement) String() string {
 
 	return out.String()
 }
+func (bs *BlockStatement) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Type       string
+		Statements []Statement
+	}{
+		Type:       "BlockStatement",
+		Statements: bs.Statements,
+	})
+}
 
 type EmptyStatement struct {
 	Token token.Token
@@ -126,6 +165,13 @@ type EmptyStatement struct {
 func (es *EmptyStatement) statementNode()       {}
 func (es *EmptyStatement) TokenLiteral() string { return es.Token.Literal }
 func (es *EmptyStatement) String() string       { return "" }
+func (es *EmptyStatement) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Type string
+	}{
+		Type: "EmptyStatement",
+	})
+}
 
 type Identifier struct {
 	Token token.Token
@@ -135,6 +181,15 @@ type Identifier struct {
 func (i *Identifier) expressionNode()      {}
 func (i *Identifier) TokenLiteral() string { return i.Token.Literal }
 func (i *Identifier) String() string       { return i.Value }
+func (i *Identifier) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Type  string
+		Value string
+	}{
+		Type:  "Identifier",
+		Value: i.Value,
+	})
+}
 
 type IntegerLiteral struct {
 	Token token.Token
@@ -144,6 +199,15 @@ type IntegerLiteral struct {
 func (il *IntegerLiteral) expressionNode()      {}
 func (il *IntegerLiteral) TokenLiteral() string { return il.Token.Literal }
 func (il *IntegerLiteral) String() string       { return il.Token.Literal }
+func (il *IntegerLiteral) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Type  string
+		Value int64
+	}{
+		Type:  "IntegerLiteral",
+		Value: il.Value,
+	})
+}
 
 type FloatLiteral struct {
 	Token token.Token
@@ -153,6 +217,15 @@ type FloatLiteral struct {
 func (fl *FloatLiteral) expressionNode()      {}
 func (fl *FloatLiteral) TokenLiteral() string { return fl.Token.Literal }
 func (fl *FloatLiteral) String() string       { return fl.Token.Literal }
+func (fl *FloatLiteral) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Type  string
+		Value float64
+	}{
+		Type:  "FloatLiteral",
+		Value: fl.Value,
+	})
+}
 
 type PrefixExpression struct {
 	Token    token.Token
@@ -171,6 +244,17 @@ func (pe *PrefixExpression) String() string {
 	out.WriteByte(')')
 
 	return out.String()
+}
+func (pe *PrefixExpression) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Type     string
+		Operator string
+		Right    Expression
+	}{
+		Type:     "PrefixExpression",
+		Operator: pe.Operator,
+		Right:    pe.Right,
+	})
 }
 
 type InfixExpression struct {
@@ -195,6 +279,19 @@ func (ie *InfixExpression) String() string {
 
 	return out.String()
 }
+func (ie *InfixExpression) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Type     string
+		Left     Expression
+		Operator string
+		Right    Expression
+	}{
+		Type:     "InfixExpression",
+		Left:     ie.Left,
+		Operator: ie.Operator,
+		Right:    ie.Right,
+	})
+}
 
 type Boolean struct {
 	Token token.Token
@@ -204,6 +301,15 @@ type Boolean struct {
 func (b *Boolean) expressionNode()      {}
 func (b *Boolean) TokenLiteral() string { return b.Token.Literal }
 func (b *Boolean) String() string       { return b.Token.Literal }
+func (b *Boolean) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Type  string
+		Value bool
+	}{
+		Type:  "Boolean",
+		Value: b.Value,
+	})
+}
 
 type IfExpression struct {
 	Token       token.Token
@@ -228,6 +334,19 @@ func (ie *IfExpression) String() string {
 	}
 
 	return out.String()
+}
+func (ie *IfExpression) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Type        string
+		Condition   Expression
+		Consequence *BlockStatement
+		Alternative *BlockStatement
+	}{
+		Type:        "IfExpression",
+		Condition:   ie.Condition,
+		Consequence: ie.Consequence,
+		Alternative: ie.Alternative,
+	})
 }
 
 type FunctionLiteral struct {
@@ -254,6 +373,17 @@ func (fl *FunctionLiteral) String() string {
 
 	return out.String()
 }
+func (fl *FunctionLiteral) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Type       string
+		Parameters []*Identifier
+		Body       *BlockStatement
+	}{
+		Type:       "FunctionLiteral",
+		Parameters: fl.Parameters,
+		Body:       fl.Body,
+	})
+}
 
 type CallExpression struct {
 	Token     token.Token
@@ -278,6 +408,17 @@ func (ce *CallExpression) String() string {
 
 	return out.String()
 }
+func (ce *CallExpression) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Type      string
+		Function  Expression
+		Arguments []Expression
+	}{
+		Type:      "CallExpression",
+		Function:  ce.Function,
+		Arguments: ce.Arguments,
+	})
+}
 
 type StringLiteral struct {
 	Token token.Token
@@ -287,6 +428,15 @@ type StringLiteral struct {
 func (sl *StringLiteral) expressionNode()      {}
 func (sl *StringLiteral) TokenLiteral() string { return sl.Token.Literal }
 func (sl *StringLiteral) String() string       { return sl.Token.Literal }
+func (sl *StringLiteral) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Type  string
+		Value string
+	}{
+		Type:  "StringLiteral",
+		Value: sl.Value,
+	})
+}
 
 type ArrayLiteral struct {
 	Token    token.Token
@@ -309,6 +459,15 @@ func (al *ArrayLiteral) String() string {
 
 	return out.String()
 }
+func (al *ArrayLiteral) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Type     string
+		Elements []Expression
+	}{
+		Type:     "ArrayLiteral",
+		Elements: al.Elements,
+	})
+}
 
 type IndexExpression struct {
 	Token token.Token
@@ -329,6 +488,17 @@ func (ie *IndexExpression) String() string {
 
 	return out.String()
 }
+func (ie *IndexExpression) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Type  string
+		Left  Expression
+		Index Expression
+	}{
+		Type:  "IndexExpression",
+		Left:  ie.Left,
+		Index: ie.Index,
+	})
+}
 
 type HashLiteral struct {
 	Token token.Token
@@ -347,4 +517,13 @@ func (hl *HashLiteral) String() string {
 	out.WriteString(strings.Join(pairs, ", "))
 	out.WriteByte('}')
 	return out.String()
+}
+func (hl *HashLiteral) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Type  string
+		Pairs map[Expression]Expression
+	}{
+		Type:  "HashLiteral",
+		Pairs: hl.Pairs,
+	})
 }
