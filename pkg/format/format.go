@@ -238,7 +238,20 @@ func (f *Formatter) formatCallExpression(callExpression *ast.CallExpression) {
 
 func (f *Formatter) formatStringLiteral(stringLiteral *ast.StringLiteral) {
 	f.buffer.WriteByte('"')
-	f.buffer.WriteString(stringLiteral.Value)
+	for _, char := range stringLiteral.Value {
+		switch char {
+		case '\n':
+			f.buffer.WriteString("\\n")
+		case '\t':
+			f.buffer.WriteString("\\t")
+		case '"':
+			f.buffer.WriteString("\\\"")
+		case '\\':
+			f.buffer.WriteString("\\\\")
+		default:
+			f.buffer.WriteRune(char)
+		}
+	}
 	f.buffer.WriteByte('"')
 }
 
