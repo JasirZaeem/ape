@@ -383,4 +383,58 @@ var builtins = map[string]*object.Builtin{
 			return &object.Array{Elements: entries}
 		},
 	},
+	"has_key": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 2 {
+				return newError("wrong number of arguments. got = %d, want = 2", len(args))
+			}
+			if args[0].Type() != object.HASH_OBJ {
+				return newError("first argument to `has_key` must be HASH, got %s", args[0].Type())
+			}
+			hashKey, ok := args[1].(object.Hashable)
+			if !ok {
+				return newError("second argument to `has_key` must be HASHABLE, got %s", args[1].Type())
+			}
+
+			hash := args[0].(*object.Hash)
+			_, ok = hash.Pairs[hashKey.HashKey()]
+			return &object.Boolean{Value: ok}
+		},
+	},
+	"set": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 3 {
+				return newError("wrong number of arguments. got = %d, want = 3", len(args))
+			}
+			if args[0].Type() != object.HASH_OBJ {
+				return newError("first argument to `set` must be HASH, got %s", args[0].Type())
+			}
+			hashKey, ok := args[1].(object.Hashable)
+			if !ok {
+				return newError("second argument to `set` must be HASHABLE, got %s", args[1].Type())
+			}
+
+			hash := args[0].(*object.Hash)
+			hash.Pairs[hashKey.HashKey()] = object.HashPair{Key: args[1], Value: args[2]}
+			return hash
+		},
+	},
+	"delete": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 2 {
+				return newError("wrong number of arguments. got = %d, want = 2", len(args))
+			}
+			if args[0].Type() != object.HASH_OBJ {
+				return newError("first argument to `delete` must be HASH, got %s", args[0].Type())
+			}
+			hashKey, ok := args[1].(object.Hashable)
+			if !ok {
+				return newError("second argument to `delete` must be HASHABLE, got %s", args[1].Type())
+			}
+
+			hash := args[0].(*object.Hash)
+			delete(hash.Pairs, hashKey.HashKey())
+			return hash
+		},
+	},
 }
