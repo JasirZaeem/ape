@@ -470,7 +470,7 @@ var builtins = map[string]*object.Builtin{
 
 			hash := args[0].(*object.Hash)
 			_, ok = hash.Pairs[hashKey.HashKey()]
-			return &object.Boolean{Value: ok}
+			return nativeBoolToBooleanObject(ok)
 		},
 	},
 	"set": {
