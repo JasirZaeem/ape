@@ -163,6 +163,8 @@ func operatorToPrecedence(operator string) int {
 		return parser.AND
 	case "||":
 		return parser.OR
+	case "=":
+		return parser.ASSIGN
 	default:
 		return parser.LOWEST
 	}

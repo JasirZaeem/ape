@@ -31,6 +31,21 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		return evalPrefixOperatorExpression(node.Operator, right)
 	case *ast.InfixExpression:
+		if node.Operator == "=" {
+			right := Eval(node.Right, env)
+			if isError(right) {
+				return right
+			}
+			name, ok := node.Left.(*ast.Identifier)
+			if !ok {
+				return newError("invalid assignment target")
+			}
+			val, ok := env.SetIfNameExists(name.Value, right)
+			if !ok {
+				return newError("assignment target not found: %s", name.Value)
+			}
+			return val
+		}
 		left := Eval(node.Left, env)
 		if isError(left) {
 			return left
