@@ -71,4 +71,4 @@ export const lightOwlInit = (options?: Partial<CreateThemeOptions>) => {
   });
 };
 
-export const nightOwl = lightOwlInit();
+export const lightOwl = lightOwlInit();
