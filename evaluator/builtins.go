@@ -43,6 +43,78 @@ var builtins = map[string]*object.Builtin{
 			return &object.String{Value: string(args[0].Type())}
 		},
 	},
+	"is_int": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got = %d, want = 1", len(args))
+			}
+
+			return nativeBoolToBooleanObject(args[0].Type() == object.INTEGER_OBJ)
+		},
+	},
+	"is_float": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got = %d, want = 1", len(args))
+			}
+
+			return nativeBoolToBooleanObject(args[0].Type() == object.FLOAT_OBJ)
+		},
+	},
+	"is_bool": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got = %d, want = 1", len(args))
+			}
+
+			return nativeBoolToBooleanObject(args[0].Type() == object.BOOLEAN_OBJ)
+		},
+	},
+	"is_string": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got = %d, want = 1", len(args))
+			}
+
+			return nativeBoolToBooleanObject(args[0].Type() == object.STRING_OBJ)
+		},
+	},
+	"is_array": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got = %d, want = 1", len(args))
+			}
+
+			return nativeBoolToBooleanObject(args[0].Type() == object.ARRAY_OBJ)
+		},
+	},
+	"is_hash": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got = %d, want = 1", len(args))
+			}
+
+			return nativeBoolToBooleanObject(args[0].Type() == object.HASH_OBJ)
+		},
+	},
+	"is_null": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got = %d, want = 1", len(args))
+			}
+
+			return nativeBoolToBooleanObject(args[0] == NULL)
+		},
+	},
+	"is_function": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got %d, want = 1", len(args))
+			}
+
+			return nativeBoolToBooleanObject(args[0].Type() == object.FUNCTION_OBJ)
+		},
+	},
 	// Type conversions
 	"int": {
 		Fn: func(args ...object.Object) object.Object {
