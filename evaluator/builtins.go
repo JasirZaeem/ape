@@ -418,7 +418,7 @@ var builtins = map[string]*object.Builtin{
 			hash := args[0].(*object.Hash)
 			keys := make([]object.Object, 0, len(hash.Pairs))
 			for _, pair := range hash.Pairs {
-				keys = append(keys, pair.Key)
+				keys = append(keys, object.DeepCopy(pair.Key))
 			}
 			return &object.Array{Elements: keys}
 		},
@@ -434,7 +434,7 @@ var builtins = map[string]*object.Builtin{
 			hash := args[0].(*object.Hash)
 			values := make([]object.Object, 0, len(hash.Pairs))
 			for _, pair := range hash.Pairs {
-				values = append(values, pair.Value)
+				values = append(values, object.DeepCopy(pair.Value))
 			}
 			return &object.Array{Elements: values}
 		},
@@ -450,7 +450,7 @@ var builtins = map[string]*object.Builtin{
 			hash := args[0].(*object.Hash)
 			entries := make([]object.Object, 0, len(hash.Pairs))
 			for _, pair := range hash.Pairs {
-				entries = append(entries, &object.Array{Elements: []object.Object{pair.Key, pair.Value}})
+				entries = append(entries, &object.Array{Elements: []object.Object{object.DeepCopy(pair.Key), object.DeepCopy(pair.Value)}})
 			}
 			return &object.Array{Elements: entries}
 		},
@@ -487,8 +487,9 @@ var builtins = map[string]*object.Builtin{
 			}
 
 			hash := args[0].(*object.Hash)
-			hash.Pairs[hashKey.HashKey()] = object.HashPair{Key: args[1], Value: args[2]}
-			return hash
+			retHash := object.DeepCopyHash(hash)
+			retHash.Pairs[hashKey.HashKey()] = object.HashPair{Key: args[1], Value: args[2]}
+			return retHash
 		},
 	},
 	"delete": {
@@ -505,8 +506,9 @@ var builtins = map[string]*object.Builtin{
 			}
 
 			hash := args[0].(*object.Hash)
-			delete(hash.Pairs, hashKey.HashKey())
-			return hash
+			retHash := object.DeepCopyHash(hash)
+			delete(retHash.Pairs, hashKey.HashKey())
+			return retHash
 		},
 	},
 }
