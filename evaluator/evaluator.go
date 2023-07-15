@@ -35,10 +35,24 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(left) {
 			return left
 		}
+		if node.Operator == "&&" {
+			if !isTruthy(left) {
+				return left
+			}
+		} else if node.Operator == "||" {
+			if isTruthy(left) {
+				return left
+			}
+		}
 		right := Eval(node.Right, env)
 		if isError(right) {
 			return right
 		}
+
+		if node.Operator == "&&" || node.Operator == "||" {
+			return right
+		}
+
 		return evalInfixOperatorExpression(node.Operator, left, right)
 	case *ast.BlockStatement:
 		return evalBlockStatement(node.Statements, env)

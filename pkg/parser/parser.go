@@ -27,6 +27,8 @@ type Parser struct {
 const (
 	_ int = iota
 	LOWEST
+	OR
+	AND
 	EQUALS
 	LESSGREATER
 	SUM
@@ -43,6 +45,8 @@ var precedences = map[token.TokenType]int{
 	token.LTE:      LESSGREATER,
 	token.GT:       LESSGREATER,
 	token.GTE:      LESSGREATER,
+	token.AND:      AND,
+	token.OR:       OR,
 	token.PLUS:     SUM,
 	token.MINUS:    SUM,
 	token.SLASH:    PRODUCT,
@@ -82,6 +86,8 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.LTE, p.parseInfixExpression)
 	p.registerInfix(token.GT, p.parseInfixExpression)
 	p.registerInfix(token.GTE, p.parseInfixExpression)
+	p.registerInfix(token.AND, p.parseInfixExpression)
+	p.registerInfix(token.OR, p.parseInfixExpression)
 	p.registerInfix(token.LBRACKET, p.parseIndexExpression)
 
 	// Populate current token and peek token
