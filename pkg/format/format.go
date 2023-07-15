@@ -155,7 +155,7 @@ func operatorToPrecedence(operator string) int {
 		return parser.SUM
 	case "*", "/":
 		return parser.PRODUCT
-	case "<", ">":
+	case "<", ">", "<=", ">=":
 		return parser.LESSGREATER
 	case "==", "!=":
 		return parser.EQUALS
