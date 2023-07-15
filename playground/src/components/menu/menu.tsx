@@ -11,7 +11,6 @@ import {
   TextAlignLeftIcon,
   TrashIcon,
 } from "@radix-ui/react-icons";
-import { Separator } from "@/components/ui/separator.tsx";
 import { Theme, useTheme } from "@/themeContext.tsx";
 import {
   DropdownMenu,
@@ -231,7 +230,6 @@ export function Menu() {
           </DropdownMenu>
         </div>
       </nav>
-      <Separator />
     </div>
   );
 }

@@ -41,7 +41,9 @@ export function Playground() {
                 setAstViewerVisible(true);
               }}
             >
-              AST
+              <span className="text-transparent bg-clip-text bg-gradient-to-br from-pink-500 to-orange-400">
+                AST
+              </span>
             </Button>
           )}
         </PanelGroup>
