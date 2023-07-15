@@ -217,7 +217,7 @@ var builtins = map[string]*object.Builtin{
 			}
 			arr := args[0].(*object.Array)
 			if len(arr.Elements) > 0 {
-				return arr.Elements[0]
+				return object.DeepCopy(arr.Elements[0])
 			}
 			return NULL
 		},
@@ -233,7 +233,7 @@ var builtins = map[string]*object.Builtin{
 			arr := args[0].(*object.Array)
 			length := len(arr.Elements)
 			if length > 0 {
-				return arr.Elements[length-1]
+				return object.DeepCopy(arr.Elements[length-1])
 			}
 			return NULL
 		},
@@ -250,7 +250,7 @@ var builtins = map[string]*object.Builtin{
 			length := len(arr.Elements)
 			if length > 0 {
 				newElements := make([]object.Object, length-1, length-1)
-				copy(newElements, arr.Elements[1:length])
+				object.DeepCopyArrayInto(newElements, arr.Elements[1:length])
 				return &object.Array{Elements: newElements}
 			}
 			return NULL
@@ -268,7 +268,7 @@ var builtins = map[string]*object.Builtin{
 			length := len(arr.Elements)
 			if length > 0 {
 				newElements := make([]object.Object, length-1, length-1)
-				copy(newElements, arr.Elements[0:length-1])
+				object.DeepCopyArrayInto(newElements, arr.Elements[:length-1])
 				return &object.Array{Elements: newElements}
 			}
 			return NULL
@@ -285,7 +285,7 @@ var builtins = map[string]*object.Builtin{
 			arr := args[0].(*object.Array)
 			length := len(arr.Elements)
 			newElements := make([]object.Object, length+1, length+1)
-			copy(newElements, arr.Elements)
+			object.DeepCopyArrayInto(newElements, arr.Elements)
 			newElements[length] = args[1]
 			return &object.Array{Elements: newElements}
 		},
@@ -302,7 +302,7 @@ var builtins = map[string]*object.Builtin{
 			length := len(arr.Elements)
 			if length > 0 {
 				newElements := make([]object.Object, length-1, length-1)
-				copy(newElements, arr.Elements[0:length-1])
+				object.DeepCopyArrayInto(newElements, arr.Elements[0:length-1])
 				return &object.Array{Elements: newElements}
 			}
 			return NULL
@@ -319,7 +319,7 @@ var builtins = map[string]*object.Builtin{
 			arr := args[0].(*object.Array)
 			length := len(arr.Elements)
 			newElements := make([]object.Object, length+1, length+1)
-			copy(newElements[1:], arr.Elements)
+			object.DeepCopyArrayInto(newElements[1:], arr.Elements)
 			newElements[0] = args[1]
 			return &object.Array{Elements: newElements}
 		},
@@ -336,7 +336,7 @@ var builtins = map[string]*object.Builtin{
 			length := len(arr.Elements)
 			if length > 0 {
 				newElements := make([]object.Object, length-1, length-1)
-				copy(newElements, arr.Elements[1:length])
+				object.DeepCopyArrayInto(newElements, arr.Elements[1:length])
 				return &object.Array{Elements: newElements}
 			}
 			return NULL
@@ -360,9 +360,9 @@ var builtins = map[string]*object.Builtin{
 				return newError("index out of range: %d", index.Value)
 			}
 			newElements := make([]object.Object, length+1, length+1)
-			copy(newElements, arr.Elements[0:index.Value])
+			object.DeepCopyArrayInto(newElements, arr.Elements[:index.Value])
 			newElements[index.Value] = args[2]
-			copy(newElements[index.Value+1:], arr.Elements[index.Value:length])
+			object.DeepCopyArrayInto(newElements[index.Value+1:], arr.Elements[index.Value:])
 			return &object.Array{Elements: newElements}
 		},
 	},
@@ -384,8 +384,8 @@ var builtins = map[string]*object.Builtin{
 				return newError("index out of range: %d", index.Value)
 			}
 			newElements := make([]object.Object, length-1, length-1)
-			copy(newElements, arr.Elements[0:index.Value])
-			copy(newElements[index.Value:], arr.Elements[index.Value+1:length])
+			object.DeepCopyArrayInto(newElements, arr.Elements[:index.Value])
+			object.DeepCopyArrayInto(newElements[index.Value:], arr.Elements[index.Value+1:])
 			return &object.Array{Elements: newElements}
 		},
 	},
@@ -401,7 +401,7 @@ var builtins = map[string]*object.Builtin{
 			length := len(arr.Elements)
 			newElements := make([]object.Object, length, length)
 			for i := 0; i < length; i++ {
-				newElements[i] = arr.Elements[length-i-1]
+				newElements[i] = object.DeepCopy(arr.Elements[length-i-1])
 			}
 			return &object.Array{Elements: newElements}
 		},
