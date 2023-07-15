@@ -12,14 +12,18 @@ export enum Theme {
   Dark = "dark",
 }
 
+export type EffectiveTheme = Theme.Light | Theme.Dark;
+
 type ThemeProviderValue = {
   theme: Theme;
   setTheme: (theme: Theme) => void;
+  effectiveTheme: EffectiveTheme;
 };
 
 const initialState = {
   theme: Theme.System,
   setTheme: () => null,
+  effectiveTheme: Theme.Light as EffectiveTheme,
 };
 
 const ThemeContext = createContext<ThemeProviderValue>(initialState);
@@ -42,30 +46,36 @@ export const ThemeProvider = ({
     }
     return defaultTheme;
   });
+  const [effectiveTheme, setEffectiveTheme] = useState<EffectiveTheme>(
+    Theme.Light
+  );
 
   useEffect(() => {
     const documentElement = window.document.documentElement;
 
     documentElement.classList.remove("dark", "light");
 
-    if (theme === "system") {
+    if (theme === Theme.System) {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
         .matches
-        ? "dark"
-        : "light";
+        ? Theme.Dark
+        : Theme.Light;
       documentElement.classList.add(systemTheme);
+      setEffectiveTheme(systemTheme);
     }
 
     documentElement.classList.add(theme);
+    // ts... -_-
+    setEffectiveTheme(theme as EffectiveTheme);
   }, [theme]);
 
   useEffect(() => {
     function handleThemeChange(event: MediaQueryListEvent) {
       if (theme === Theme.System) {
         document.documentElement.classList.remove("dark", "light");
-        document.documentElement.classList.add(
-          event.matches ? "dark" : "light"
-        );
+        const newTheme = event.matches ? Theme.Dark : Theme.Light;
+        document.documentElement.classList.add(newTheme);
+        setEffectiveTheme(newTheme as unknown as EffectiveTheme);
       }
     }
 
@@ -86,6 +96,7 @@ export const ThemeProvider = ({
       localStorage.setItem(storageKey, theme);
       setTheme(theme);
     },
+    effectiveTheme,
   };
 
   return (
