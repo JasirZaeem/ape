@@ -111,6 +111,8 @@ func (f *Formatter) formatExpression(expression *ast.Expression, precedence int)
 		f.formatInfixExpression(expression, precedence)
 	case *ast.IfExpression:
 		f.formatIfExpression(expression)
+	case *ast.WhileExpression:
+		f.formatWhileExpression(expression)
 	case *ast.FunctionLiteral:
 		f.formatFunctionLiteral(expression)
 	case *ast.CallExpression:
@@ -191,6 +193,15 @@ func (f *Formatter) formatIfExpression(ifExpression *ast.IfExpression) {
 		f.writeIndent()
 		f.buffer.WriteByte('}')
 	}
+}
+
+func (f *Formatter) formatWhileExpression(whileExpression *ast.WhileExpression) {
+	f.buffer.WriteString("while (")
+	f.formatExpression(&whileExpression.Condition, parser.LOWEST)
+	f.buffer.WriteString(") {\n")
+	f.formatBlockStatement(whileExpression.Body)
+	f.writeIndent()
+	f.buffer.WriteByte('}')
 }
 
 func (f *Formatter) formatFunctionLiteral(functionLiteral *ast.FunctionLiteral) {

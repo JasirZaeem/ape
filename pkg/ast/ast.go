@@ -349,6 +349,36 @@ func (ie *IfExpression) MarshalJSON() ([]byte, error) {
 	})
 }
 
+type WhileExpression struct {
+	Token     token.Token
+	Condition Expression
+	Body      *BlockStatement
+}
+
+func (we *WhileExpression) expressionNode()      {}
+func (we *WhileExpression) TokenLiteral() string { return we.Token.Literal }
+func (we *WhileExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("while")
+	out.WriteString(we.Condition.String())
+	out.WriteByte(' ')
+	out.WriteString(we.Body.String())
+
+	return out.String()
+}
+func (we *WhileExpression) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Type      string
+		Condition Expression
+		Body      *BlockStatement
+	}{
+		Type:      "WhileExpression",
+		Condition: we.Condition,
+		Body:      we.Body,
+	})
+}
+
 type FunctionLiteral struct {
 	Token      token.Token
 	Parameters []*Identifier
