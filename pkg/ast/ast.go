@@ -549,11 +549,26 @@ func (hl *HashLiteral) String() string {
 	return out.String()
 }
 func (hl *HashLiteral) MarshalJSON() ([]byte, error) {
+
+	pairs := []struct {
+		Key   Expression
+		Value Expression
+	}{}
+	for key, value := range hl.Pairs {
+		pairs = append(pairs, struct {
+			Key   Expression
+			Value Expression
+		}{Key: key, Value: value})
+	}
+
 	return json.Marshal(struct {
 		Type  string
-		Pairs map[Expression]Expression
+		Pairs []struct {
+			Key   Expression
+			Value Expression
+		}
 	}{
 		Type:  "HashLiteral",
-		Pairs: hl.Pairs,
+		Pairs: pairs,
 	})
 }
