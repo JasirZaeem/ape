@@ -274,6 +274,84 @@ var builtins = map[string]*object.Builtin{
 			return NULL
 		},
 	},
+	"at": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 2 {
+				return newError("wrong number of arguments. got = %d, want = 2", len(args))
+			}
+			if args[0].Type() != object.ARRAY_OBJ {
+				return newError("argument to `at` must be ARRAY, got %s", args[0].Type())
+			}
+			if args[1].Type() != object.INTEGER_OBJ {
+				return newError("index to `at` must be INTEGER, got %s", args[1].Type())
+			}
+			arr := args[0].(*object.Array)
+			index := args[1].(*object.Integer).Value
+			if index < 0 {
+				index = int64(len(arr.Elements)) + index
+			}
+
+			length := len(arr.Elements)
+			if index < 0 || index > int64(length-1) {
+				return NULL
+			}
+			return object.DeepCopy(arr.Elements[index])
+		},
+	},
+	"set_at": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 3 {
+				return newError("wrong number of arguments. got = %d, want = 3", len(args))
+			}
+			if args[0].Type() != object.ARRAY_OBJ {
+				return newError("argument to `set_at` must be ARRAY, got %s", args[0].Type())
+			}
+			if args[1].Type() != object.INTEGER_OBJ {
+				return newError("index to `set_at` must be INTEGER, got %s", args[1].Type())
+			}
+			arr := args[0].(*object.Array)
+			index := args[1].(*object.Integer).Value
+			if index < 0 {
+				index = int64(len(arr.Elements)) + index
+			}
+
+			length := len(arr.Elements)
+			if index < 0 || index > int64(length-1) {
+				return NULL
+			}
+			retArr := &object.Array{Elements: make([]object.Object, length, length)}
+			object.DeepCopyArrayInto(retArr.Elements, arr.Elements)
+			retArr.Elements[index] = args[2]
+			return retArr
+		},
+	},
+	"del_at": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 2 {
+				return newError("wrong number of arguments. got = %d, want = 2", len(args))
+			}
+			if args[0].Type() != object.ARRAY_OBJ {
+				return newError("argument to `del_at` must be ARRAY, got %s", args[0].Type())
+			}
+			if args[1].Type() != object.INTEGER_OBJ {
+				return newError("index to `del_at` must be INTEGER, got %s", args[1].Type())
+			}
+			arr := args[0].(*object.Array)
+			index := args[1].(*object.Integer).Value
+			if index < 0 {
+				index = int64(len(arr.Elements)) + index
+			}
+
+			length := len(arr.Elements)
+			if index < 0 || index > int64(length-1) {
+				return NULL
+			}
+			newElements := make([]object.Object, length-1, length-1)
+			object.DeepCopyArrayInto(newElements, arr.Elements[:index])
+			object.DeepCopyArrayInto(newElements[index:], arr.Elements[index+1:])
+			return &object.Array{Elements: newElements}
+		},
+	},
 	"push": {
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 2 {
