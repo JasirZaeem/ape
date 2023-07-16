@@ -83,7 +83,12 @@ func (l *Lexer) NextToken() token.Token {
 			tok = newToken(token.BIT_OR, l.ch)
 		}
 	case '/':
-		tok = newToken(token.SLASH, l.ch)
+		if l.peekChar() == '/' {
+			l.readChar()
+			tok = token.Token{Type: token.DOUBLE_SLASH, Literal: "//"}
+		} else {
+			tok = newToken(token.SLASH, l.ch)
+		}
 	case '*':
 		if l.peekChar() == '*' {
 			l.readChar()

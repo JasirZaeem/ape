@@ -265,6 +265,11 @@ func evalIntegerInfixExpression(operator string, left, right object.Object) obje
 			return newError("division by zero")
 		}
 		return &object.Integer{Value: leftVal / rightVal}
+	case "//":
+		if rightVal == 0 {
+			return newError("division by zero")
+		}
+		return &object.Integer{Value: int64(math.Floor(float64(leftVal) / float64(rightVal)))}
 	case "**":
 		return &object.Integer{Value: powInt(leftVal, rightVal)}
 	case "<<":
@@ -310,6 +315,11 @@ func evalFloatInfixExpression(operator string, left, right object.Object) object
 			return newError("division by zero")
 		}
 		return &object.Float{Value: leftVal / rightVal}
+	case "//":
+		if rightVal == 0 {
+			return newError("division by zero")
+		}
+		return &object.Float{Value: math.Floor(leftVal / rightVal)}
 	case "**":
 		return &object.Float{Value: math.Pow(leftVal, rightVal)}
 	case "<":
