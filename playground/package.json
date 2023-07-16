@@ -32,7 +32,8 @@
     "react-json-tree": "^0.18.0",
     "react-resizable-panels": "^0.0.53",
     "tailwind-merge": "^1.13.2",
-    "tailwindcss-animate": "^1.0.6"
+    "tailwindcss-animate": "^1.0.6",
+    "zustand": "^4.3.9"
   },
   "devDependencies": {
     "@types/node": "^20.4.0",
