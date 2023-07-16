@@ -438,7 +438,7 @@ func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Obje
 func evalWhileExpression(we *ast.WhileExpression, env *object.Environment) object.Object {
 	var result object.Object
 	for true {
-		if result != nil && result.Type() == object.RETURN_VALUE_OBJ {
+		if result != nil && (result.Type() == object.RETURN_VALUE_OBJ || result.Type() == object.ERROR_OBJ) {
 			return result
 		}
 
