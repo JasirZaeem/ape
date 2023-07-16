@@ -186,6 +186,8 @@ func evalPrefixOperatorExpression(operator string, right object.Object) object.O
 		return evalMinusOperatorExpression(right)
 	case "+":
 		return evalPlusOperatorExpression(right)
+	case "~":
+		return evalBitwiseNotOperatorExpression(right)
 	default:
 		return newError("unknown operator: %s%s", operator, right.Type())
 	}
@@ -213,6 +215,14 @@ func evalPlusOperatorExpression(right object.Object) object.Object {
 		return right
 	}
 	return newError("unknown operator: +%s", right.Type())
+}
+
+func evalBitwiseNotOperatorExpression(right object.Object) object.Object {
+	if right.Type() == object.INTEGER_OBJ {
+		value := right.(*object.Integer).Value
+		return &object.Integer{Value: ^value}
+	}
+	return newError("unknown operator: ~%s", right.Type())
 }
 
 func evalInfixOperatorExpression(operator string, left, right object.Object) object.Object {

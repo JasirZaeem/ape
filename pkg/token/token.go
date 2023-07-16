@@ -28,6 +28,7 @@ const (
 	DOUBLE_SLASH = "//"
 	EXPONENT     = "**"
 
+	BIT_NOT     = "~"
 	LEFT_SHIFT  = "<<"
 	RIGHT_SHIFT = ">>"
 	BIT_AND     = "&"

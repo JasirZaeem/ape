@@ -66,6 +66,8 @@ func (l *Lexer) NextToken() token.Token {
 		} else {
 			tok = newToken(token.BANG, l.ch)
 		}
+	case '~':
+		tok = newToken(token.BIT_NOT, l.ch)
 	case '&':
 		if l.peekChar() == '&' {
 			l.readChar()
