@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button.tsx";
+import { Button, ButtonProps } from "@/components/ui/button.tsx";
 import {
   CursorTextIcon,
   DesktopIcon,
@@ -29,6 +29,7 @@ import { ExampleSelector } from "@/components/menu/exampleSelector.tsx";
 import { ApeCodeSource, ApeResultType } from "@/hooks/useApe.ts";
 import { useApeStore } from "@/hooks/useApeStore.ts";
 import { useApe } from "@/apeContext.tsx";
+import { ReactNode } from "react";
 
 const themeIcons = {
   [Theme.System]: DesktopIcon,
@@ -42,25 +43,78 @@ const themeNames = {
   [Theme.Dark]: "Dark",
 };
 
-export function Menu() {
-  const { theme, setTheme } = useTheme();
-  const CurrentThemeIcon = themeIcons[theme];
+function MenuButton({
+  children,
+  toolTipContent,
+  ...props
+}: ButtonProps & {
+  toolTipContent: ReactNode;
+}) {
+  return (
+    <TooltipProvider delayDuration={500}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button variant="outline" size="icon" {...props}>
+            {children}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{toolTipContent}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
 
-  const { formatCode, getAst, runCode, resetApe } = useApe();
-
-  const setAst = useApeStore((state) => state.setAst);
+function RunCodeButton() {
   const code = useApeStore((state) => state.code);
-  const setCode = useApeStore((state) => state.setCode);
+  const { runCode } = useApe();
+
+  return (
+    <MenuButton
+      toolTipContent="Run Code"
+      onClick={() => runCode(code, ApeCodeSource.EDITOR)}
+      variant="default"
+      className="bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800"
+    >
+      <PlayIcon />
+    </MenuButton>
+  );
+}
+
+function RunSelectedCodeButton() {
+  const selectedCode = useApeStore((state) => state.selectedCode);
+  const isCodeSelected = useApeStore((state) => state.isCodeSelected);
+  const { runCode } = useApe();
+
+  return (
+    <MenuButton
+      toolTipContent="Run selected code"
+      onClick={() => runCode(selectedCode, ApeCodeSource.EDITOR)}
+      disabled={!isCodeSelected}
+    >
+      <CursorTextIcon />
+    </MenuButton>
+  );
+}
+
+const FormatCodeButton = () => {
+  const code = useApeStore((state) => state.code);
+  const { formatCode } = useApe();
+
+  return (
+    <MenuButton toolTipContent="Format code" onClick={() => formatCode(code)}>
+      <TextAlignLeftIcon />
+    </MenuButton>
+  );
+};
+
+const ToggleAstViewerButton = () => {
+  const code = useApeStore((state) => state.code);
   const astViewerVisible = useApeStore((state) => state.astViewerVisible);
   const setAstViewerVisible = useApeStore((state) => state.setAstViewerVisible);
-  const selectedCode = useApeStore((state) => state.selectedCode);
-
-  function codeFormatHandler() {
-    const result = formatCode(code);
-    if (result.type === "FORMATTED") {
-      setCode(result.value);
-    }
-  }
+  const setAst = useApeStore((state) => state.setAst);
+  const { getAst } = useApe();
 
   function getAstHandler() {
     if (astViewerVisible) {
@@ -74,6 +128,31 @@ export function Menu() {
       setAst(result.value);
     }
   }
+
+  return (
+    <TooltipProvider delayDuration={500}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button onClick={getAstHandler} variant="outline" size="icon">
+            {astViewerVisible ? <EyeClosedIcon /> : <EyeOpenIcon />}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p className="text-center">
+            {astViewerVisible ? "Hide" : "Show"} AST
+          </p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
+
+export function Menu() {
+  const { theme, setTheme } = useTheme();
+  const CurrentThemeIcon = themeIcons[theme];
+
+  const { resetApe } = useApe();
+  const setCode = useApeStore((state) => state.setCode);
 
   return (
     <div>
@@ -91,111 +170,28 @@ export function Menu() {
             }}
           />
 
-          <TooltipProvider delayDuration={500}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  onClick={() => runCode(code, ApeCodeSource.EDITOR)}
-                  variant="default"
-                  size="icon"
-                  className="bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800"
-                >
-                  <PlayIcon />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Run code</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <RunCodeButton />
+          <RunSelectedCodeButton />
+          <FormatCodeButton />
 
-          <TooltipProvider delayDuration={500}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span>
-                  <Button
-                    onClick={() => runCode(selectedCode, ApeCodeSource.EDITOR)}
-                    variant="outline"
-                    size="icon"
-                    disabled={selectedCode === ""}
-                  >
-                    <CursorTextIcon />
-                  </Button>
-                </span>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Run selected code</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <MenuButton
+            toolTipContent={
+              <>
+                Reset interpreter environment
+                <br />
+                (removes all set variables)
+              </>
+            }
+            onClick={resetApe}
+          >
+            <ResetIcon />
+          </MenuButton>
 
-          <TooltipProvider delayDuration={500}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span>
-                  <Button
-                    onClick={codeFormatHandler}
-                    variant="outline"
-                    size="icon"
-                  >
-                    <TextAlignLeftIcon />
-                  </Button>
-                </span>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Format code</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <ToggleAstViewerButton />
 
-          <TooltipProvider delayDuration={500}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button onClick={resetApe} variant="outline" size="icon">
-                  <ResetIcon />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="text-center">
-                  Reset interpreter environment
-                  <br />
-                  (removes all set variables)
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <TooltipProvider delayDuration={500}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button onClick={getAstHandler} variant="outline" size="icon">
-                  {astViewerVisible ? <EyeClosedIcon /> : <EyeOpenIcon />}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="text-center">
-                  {astViewerVisible ? "Hide" : "Show"} AST
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <TooltipProvider delayDuration={500}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  onClick={() => setCode("")}
-                  variant="outline"
-                  size="icon"
-                >
-                  <TrashIcon />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Clear code</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <MenuButton toolTipContent="Clear code" onClick={() => setCode("")}>
+            <TrashIcon />
+          </MenuButton>
 
           <DropdownMenu>
             <TooltipProvider delayDuration={500}>
@@ -227,25 +223,11 @@ export function Menu() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <TooltipProvider delayDuration={500}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  onClick={() => setCode("")}
-                  variant="outline"
-                  size="icon"
-                  asChild
-                >
-                  <a href="https://github.com/JasirZaeem/ape">
-                    <InfoCircledIcon />
-                  </a>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Check Documentation</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <MenuButton toolTipContent="View Documentation" asChild>
+            <a href="https://github.com/JasirZaeem/ape" target="_blank">
+              <InfoCircledIcon />
+            </a>
+          </MenuButton>
         </div>
       </nav>
     </div>

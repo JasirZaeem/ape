@@ -6,6 +6,7 @@ type State = {
   code: string;
   setCode: (code: string) => void;
   selectedCode: string;
+  isCodeSelected: boolean;
   setSelectedCode: (selectedCode: string) => void;
   astViewerVisible: boolean;
   setAstViewerVisible: (astViewerVisible: boolean) => void;
@@ -41,7 +42,9 @@ export const useApeStore = create<State>((set, get) => {
       setToLocalStorage("code", code);
     },
     selectedCode: "",
-    setSelectedCode: (selectedCode: string) => set({ selectedCode }),
+    isCodeSelected: false,
+    setSelectedCode: (selectedCode: string) =>
+      set({ selectedCode, isCodeSelected: selectedCode.trim() !== "" }),
     astViewerVisible: getFromLocalStorage("astViewerVisible", false),
     setAstViewerVisible: (astViewerVisible: boolean) => {
       set({ astViewerVisible });

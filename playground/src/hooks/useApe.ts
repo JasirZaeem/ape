@@ -25,6 +25,9 @@ export enum ApeResultType {
   // Json Ast
   JSON_ERROR = "JSON_ERROR",
   JSON_AST = "JSON_AST",
+
+  // Formatted code
+  FORMATTED = "FORMATTED",
 }
 
 export enum ApeCodeSource {
@@ -38,7 +41,7 @@ export type ApeResult = {
 };
 
 export type FormatCodeResult = {
-  type: ApeResultType.PARSER_ERROR | "FORMATTED";
+  type: ApeResultType.PARSER_ERROR | ApeResultType.FORMATTED;
   value: string;
 };
 
