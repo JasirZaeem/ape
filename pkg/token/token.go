@@ -24,6 +24,7 @@ const (
 	OR           = "||"
 	ASTERISK     = "*"
 	SLASH        = "/"
+	MODULO       = "%"
 	DOUBLE_SLASH = "//"
 	EXPONENT     = "**"
 

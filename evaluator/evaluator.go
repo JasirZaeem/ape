@@ -265,6 +265,11 @@ func evalIntegerInfixExpression(operator string, left, right object.Object) obje
 			return newError("division by zero")
 		}
 		return &object.Integer{Value: leftVal / rightVal}
+	case "%":
+		if rightVal == 0 {
+			return newError("modulo by zero")
+		}
+		return &object.Integer{Value: leftVal % rightVal}
 	case "//":
 		if rightVal == 0 {
 			return newError("division by zero")
@@ -315,6 +320,11 @@ func evalFloatInfixExpression(operator string, left, right object.Object) object
 			return newError("division by zero")
 		}
 		return &object.Float{Value: leftVal / rightVal}
+	case "%":
+		if rightVal == 0 {
+			return newError("modulo by zero")
+		}
+		return &object.Float{Value: math.Mod(leftVal, rightVal)}
 	case "//":
 		if rightVal == 0 {
 			return newError("division by zero")

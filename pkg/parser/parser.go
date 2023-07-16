@@ -64,6 +64,7 @@ var precedences = map[token.TokenType]int{
 	token.SLASH:        PRODUCT,
 	token.DOUBLE_SLASH: PRODUCT,
 	token.ASTERISK:     PRODUCT,
+	token.MODULO:       PRODUCT,
 	token.EXPONENT:     EXPONENTIATION,
 	token.LPAREN:       CALL,
 	token.LBRACKET:     INDEX,
@@ -95,6 +96,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.PLUS, p.parseInfixExpression)
 	p.registerInfix(token.MINUS, p.parseInfixExpression)
 	p.registerInfix(token.SLASH, p.parseInfixExpression)
+	p.registerInfix(token.MODULO, p.parseInfixExpression)
 	p.registerInfix(token.DOUBLE_SLASH, p.parseInfixExpression)
 	p.registerInfix(token.ASTERISK, p.parseInfixExpression)
 	p.registerInfix(token.EXPONENT, p.parseInfixExpression)
