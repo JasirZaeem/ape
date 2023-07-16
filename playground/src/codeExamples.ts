@@ -1,3 +1,57 @@
+export const helloWorld = `print("Hello, World!");
+`;
+
+export const functions = `let add = fn(x, y) {
+  return x + y;
+};
+
+let result = add(1, 2);
+print(result);
+`;
+
+export const closures = `let make_adder = fn(a, b) {
+  fn(c) {
+    a + b + c;
+  };
+};
+
+let adder = make_adder(1, 2);
+
+adder(8);
+`;
+
+export const higherOrderFunctions = `let apply = fn(f, x, y) {
+  return f(x, y);
+};
+
+let add = fn(x, y) {
+  return x + y;
+};
+
+let result = apply(add, 1, 2);
+print(result);
+`;
+
+export const conditionalExpressions = `let x = 1;
+let y = 2;
+let result = if (x < y) {
+  "x is less than y";
+} else {
+  "x is greater than or equal to y";
+};
+
+print(result);
+`;
+
+export const whileExpressions = `let x = 0;
+let last = while (x < 10) {
+  print(x);
+  x = x + 1;
+};
+
+print(last);
+`;
+
 export const fibonacci = `let fib = fn(n) {
   if (n < 2) {
     n;
@@ -384,8 +438,35 @@ let is_even = fn(x) { x % 2 == 0 };
 print(filter([1, 2, 3, 4, 5], is_even));
 `;
 
+export const sort = `let sort = fn(arr) {
+  let length = len(arr);
+  let i = 0;
+  while (i < length) {
+    let j = i + 1;
+    while (j < length) {
+      if (arr[i] > arr[j]) {
+        let tmp = arr[i];
+        arr = set_at(arr, i, arr[j]);
+        arr = set_at(arr, j, tmp);
+      };
+      j = j + 1;
+    };
+    i = i + 1;
+  };
+  return arr;
+};
+
+print(sort([5, 4, 3, 2, 1]));
+`;
+
 export const examples = {
+  "Hello World": helloWorld,
+  Functions: functions,
+  Closures: closures,
   Fibonacci: fibonacci,
+  "Higher Order Functions": higherOrderFunctions,
+  "Conditional Expression": conditionalExpressions,
+  "While Expression": whileExpressions,
   "Tower of Hanoi": towerOfHanoi,
   Factorial: factorial,
   Operators: operators,
@@ -398,4 +479,5 @@ export const examples = {
   Map: map,
   Fold: fold,
   Filter: filter,
+  Sort: sort,
 };
