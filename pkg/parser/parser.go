@@ -32,6 +32,10 @@ const (
 	AND
 	EQUALS
 	LESSGREATER
+	BIT_OR
+	BIT_XOR
+	BIT_AND
+	SHIFTS
 	SUM
 	PRODUCT
 	PREFIX
@@ -40,21 +44,26 @@ const (
 )
 
 var precedences = map[token.TokenType]int{
-	token.ASSIGN:   ASSIGN,
-	token.EQ:       EQUALS,
-	token.NOT_EQ:   EQUALS,
-	token.LT:       LESSGREATER,
-	token.LTE:      LESSGREATER,
-	token.GT:       LESSGREATER,
-	token.GTE:      LESSGREATER,
-	token.AND:      AND,
-	token.OR:       OR,
-	token.PLUS:     SUM,
-	token.MINUS:    SUM,
-	token.SLASH:    PRODUCT,
-	token.ASTERISK: PRODUCT,
-	token.LPAREN:   CALL,
-	token.LBRACKET: INDEX,
+	token.ASSIGN:      ASSIGN,
+	token.EQ:          EQUALS,
+	token.NOT_EQ:      EQUALS,
+	token.LEFT_SHIFT:  SHIFTS,
+	token.RIGHT_SHIFT: SHIFTS,
+	token.BIT_AND:     BIT_AND,
+	token.BIT_XOR:     BIT_XOR,
+	token.BIT_OR:      BIT_OR,
+	token.LT:          LESSGREATER,
+	token.LTE:         LESSGREATER,
+	token.GT:          LESSGREATER,
+	token.GTE:         LESSGREATER,
+	token.AND:         AND,
+	token.OR:          OR,
+	token.PLUS:        SUM,
+	token.MINUS:       SUM,
+	token.SLASH:       PRODUCT,
+	token.ASTERISK:    PRODUCT,
+	token.LPAREN:      CALL,
+	token.LBRACKET:    INDEX,
 }
 
 func New(l *lexer.Lexer) *Parser {
@@ -83,6 +92,11 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.MINUS, p.parseInfixExpression)
 	p.registerInfix(token.SLASH, p.parseInfixExpression)
 	p.registerInfix(token.ASTERISK, p.parseInfixExpression)
+	p.registerInfix(token.LEFT_SHIFT, p.parseInfixExpression)
+	p.registerInfix(token.RIGHT_SHIFT, p.parseInfixExpression)
+	p.registerInfix(token.BIT_AND, p.parseInfixExpression)
+	p.registerInfix(token.BIT_XOR, p.parseInfixExpression)
+	p.registerInfix(token.BIT_OR, p.parseInfixExpression)
 	p.registerInfix(token.EQ, p.parseInfixExpression)
 	p.registerInfix(token.NOT_EQ, p.parseInfixExpression)
 	p.registerInfix(token.LT, p.parseInfixExpression)

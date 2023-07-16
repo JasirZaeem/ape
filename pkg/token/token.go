@@ -25,6 +25,12 @@ const (
 	ASTERISK = "*"
 	SLASH    = "/"
 
+	LEFT_SHIFT  = "<<"
+	RIGHT_SHIFT = ">>"
+	BIT_AND     = "&"
+	BIT_XOR     = "^"
+	BIT_OR      = "|"
+
 	LT     = "<"
 	LTE    = "<="
 	GT     = ">"

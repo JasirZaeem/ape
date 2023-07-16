@@ -71,14 +71,16 @@ func (l *Lexer) NextToken() token.Token {
 			l.readChar()
 			tok = token.Token{Type: token.AND, Literal: "&&"}
 		} else {
-			tok = newToken(token.ILLEGAL, l.ch)
+			tok = newToken(token.BIT_AND, l.ch)
 		}
+	case '^':
+		tok = newToken(token.BIT_XOR, l.ch)
 	case '|':
 		if l.peekChar() == '|' {
 			l.readChar()
 			tok = token.Token{Type: token.OR, Literal: "||"}
 		} else {
-			tok = newToken(token.ILLEGAL, l.ch)
+			tok = newToken(token.BIT_OR, l.ch)
 		}
 	case '/':
 		tok = newToken(token.SLASH, l.ch)
@@ -88,6 +90,9 @@ func (l *Lexer) NextToken() token.Token {
 		if l.peekChar() == '=' {
 			l.readChar()
 			tok = token.Token{Type: token.LTE, Literal: "<="}
+		} else if l.peekChar() == '<' {
+			l.readChar()
+			tok = token.Token{Type: token.LEFT_SHIFT, Literal: "<<"}
 		} else {
 			tok = newToken(token.LT, l.ch)
 		}
@@ -95,6 +100,9 @@ func (l *Lexer) NextToken() token.Token {
 		if l.peekChar() == '=' {
 			l.readChar()
 			tok = token.Token{Type: token.GTE, Literal: ">="}
+		} else if l.peekChar() == '>' {
+			l.readChar()
+			tok = token.Token{Type: token.RIGHT_SHIFT, Literal: ">>"}
 		} else {
 			tok = newToken(token.GT, l.ch)
 		}
