@@ -58,7 +58,10 @@ export function ApeProvider({ children }: { children: ReactNode }) {
   const [code, setCode] = useLocalState(fibonacci, "code");
   const [ast, setDebouncedAst, setAstNow] = useDebouncedState<unknown>({}, 200);
   const [selectedCode, setSelectedCode] = useState("");
-  const [astViewerVisible, setAstViewerVisible] = useState(false);
+  const [astViewerVisible, setAstViewerVisible] = useLocalState(
+    false,
+    "astViewerVisible"
+  );
 
   return (
     <ApeContext.Provider
