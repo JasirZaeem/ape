@@ -318,6 +318,72 @@ let faster_pop_count = fn(n) {
 print(pop_count(6148914691236517205));
 `;
 
+export const map = `let map = fn(arr, f) {
+  let length = len(arr);
+  let result = [];
+  let i = 0;
+  while (i < length) {
+    result = push(result, f(arr[i]));
+    i = i + 1;
+  }
+  return result;
+};
+
+let double = fn(x) { x * 2 };
+print(map([1, 2, 3, 4, 5], double));
+`;
+
+export const fold = `let fold = fn(arr, init, f) {
+  let length = len(arr);
+  let result = init;
+  let i = 0;
+  while (i < length) {
+    result = f(result, arr[i]);
+    i = i + 1;
+  }
+  return result;
+};
+
+let foldl = fn(arr, init, f) {
+  let length = len(arr);
+  let result = init;
+  let i = length - 1;
+  while (i >= 0) {
+    result = f(result, arr[i]);
+    i = i - 1;
+  }
+  return result;
+};
+
+let sum = fn(arr) {
+  fold(arr, 0, fn(acc, x) { acc + x });
+};
+
+let concat_str_left = fn(arr) {
+  foldl(arr, "", fn(acc, x) { acc + x });
+};
+
+print(sum([1, 2, 3, 4, 5]));
+print(concat_str_left(["a", "b", "c", "d", "e"]));
+`;
+
+export const filter = `let filter = fn(arr, f) {
+  let length = len(arr);
+  let result = [];
+  let i = 0;
+  while (i < length) {
+    if (f(arr[i])) {
+      result = push(result, arr[i]);
+    };
+    i = i + 1;
+  }
+  return result;
+};
+
+let is_even = fn(x) { x % 2 == 0 };
+print(filter([1, 2, 3, 4, 5], is_even));
+`;
+
 export const examples = {
   Fibonacci: fibonacci,
   "Tower of Hanoi": towerOfHanoi,
@@ -329,4 +395,7 @@ export const examples = {
   "Two Sum": twoSum,
   "Single Number": singleNumber,
   "Pop Count": popCount,
+  Map: map,
+  Fold: fold,
+  Filter: filter,
 };
