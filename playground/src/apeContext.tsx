@@ -16,6 +16,7 @@ import {
 } from "@/hooks/useApe.ts";
 import { fibonacci } from "@/codeExamples.ts";
 import { useDebouncedState } from "@/hooks/useDebouncedState.ts";
+import { useLocalState } from "@/hooks/useLocalState.ts";
 
 type ApeContextType = {
   history: ApeInterpreterHistory[];
@@ -54,7 +55,7 @@ const ApeContext = createContext<ApeContextType>({
 export function ApeProvider({ children }: { children: ReactNode }) {
   const { history, runCode, formatCode, getAst, resetApe } =
     useApeInterpreter();
-  const [code, setCode] = useState(fibonacci);
+  const [code, setCode] = useLocalState(fibonacci, "code");
   const [ast, setDebouncedAst, setAstNow] = useDebouncedState<unknown>({}, 200);
   const [selectedCode, setSelectedCode] = useState("");
   const [astViewerVisible, setAstViewerVisible] = useState(false);
