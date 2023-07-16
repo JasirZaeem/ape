@@ -521,6 +521,8 @@ func evalIndexExpression(left object.Object, index object.Object) object.Object 
 	switch {
 	case left.Type() == object.ARRAY_OBJ && index.Type() == object.INTEGER_OBJ:
 		return evalArrayIndexExpression(left, index)
+	case left.Type() == object.STRING_OBJ && index.Type() == object.INTEGER_OBJ:
+		return evalStringIndexExpression(left, index)
 	case left.Type() == object.HASH_OBJ:
 		return evalHashIndexExpression(left, index)
 	default:
@@ -532,12 +534,30 @@ func evalArrayIndexExpression(array, index object.Object) object.Object {
 	arrayObject := array.(*object.Array)
 	idx := index.(*object.Integer).Value
 	max := int64(len(arrayObject.Elements) - 1)
+	if idx < 0 {
+		idx = max + idx + 1
+	}
 
 	if idx < 0 || idx > max {
 		return NULL
 	}
 
 	return arrayObject.Elements[idx]
+}
+
+func evalStringIndexExpression(str, index object.Object) object.Object {
+	strObject := str.(*object.String)
+	idx := index.(*object.Integer).Value
+	max := int64(len(strObject.Value) - 1)
+	if idx < 0 {
+		idx = max + idx + 1
+	}
+
+	if idx < 0 || idx > max {
+		return NULL
+	}
+
+	return &object.String{Value: string(strObject.Value[idx])}
 }
 
 func evalHashLiteral(node *ast.HashLiteral, env *object.Environment) object.Object {
