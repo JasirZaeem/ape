@@ -114,11 +114,168 @@ let nums = [2, 7, 11, 15];
 let target = 9;
 print(two_sum(nums, target));
 `;
+
+export const operators = `print("1 + 2 == ", 1 + 2);
+print("1.3 + 2.7 == ", 1.3 + 2.7);
+print("\\"hello\\" + \\" \\" + \\"world\\" == ", "hello" + " " + "world");
+print();
+
+print("1 - 2 == ", 1 - 2);
+print("1.3 - 2.7 == ", 1.3 - 2.7);
+print();
+
+print("1 * 2 == ", 1 * 2);
+print("1.3 * 2.7 == ", 1.3 * 2.7);
+print();
+
+print("1 / 2 == ", 1 / 2);
+print("1.3 / 2.7 == ", 1.3 / 2.7);
+print();
+
+print("1 // 2 == ", 1 // 2);
+print("1.3 // 2.7 == ", 1.3 // 2.7);
+print();
+
+print("1 % 2 == ", 1 % 2);
+print("1.3 % 2.7 == ", 1.3 % 2.7);
+print();
+
+print("1 ** 2 == ", 1 ** 2);
+print("1.3 ** 2.7 == ", 1.3 ** 2.7);
+print();
+
+print("1 == 2 == ", 1 == 2);
+print("1.3 == 2.7 == ", 1.3 == 2.7);
+print("\\"hello\\" == \\"world\\" == ", "hello" == "world");
+print("true == false == ", true == false);
+print();
+
+print("1 != 2 == ", 1 != 2);
+print("1.3 != 2.7 == ", 1.3 != 2.7);
+print("\\"hello\\" != \\"world\\" == ", "hello" != "world");
+print("true != false == ", true != false);
+print();
+
+print("1 < 2 == ", 1 < 2);
+print("1.3 < 2.7 == ", 1.3 < 2.7);
+print("\\"hello\\" < \\"world\\" == ", "hello" < "world");
+print("true < false == ", true < false);
+print();
+
+print("1 <= 2 == ", 1 <= 2);
+print("1.3 <= 2.7 == ", 1.3 <= 2.7);
+print("\\"hello\\" <= \\"world\\" == ", "hello" <= "world");
+print("true <= false == ", true <= false);
+print();
+
+print("1 > 2 == ", 1 > 2);
+print("1.3 > 2.7 == ", 1.3 > 2.7);
+print("\\"hello\\" > \\"world\\" == ", "hello" > "world");
+print("true > false == ", true > false);
+print();
+
+print("1 >= 2 == ", 1 >= 2);
+print("1.3 >= 2.7 == ", 1.3 >= 2.7);
+print("\\"hello\\" >= \\"world\\" == ", "hello" >= "world");
+print("true >= false == ", true >= false);
+print();
+
+print("1 & 2 == ", 1 & 2);
+print();
+
+print("1 | 2 == ", 1 | 2);
+print();
+
+print("1 ^ 2 == ", 1 ^ 2);
+print();
+
+print("1 << 2 == ", 1 << 2);
+print();
+
+print("1 >> 2 == ", 1 >> 2);
+print();
+
+print("1 && 2 == ", 1 && 2);
+print("1.3 && 2.7 == ", 1.3 && 2.7);
+print("\\"hello\\" && \\"world\\" == ", "hello" && "world");
+print("true && false == ", true && false);
+print("[1, 2] && [3, 4] == ", [1, 2] && [3, 4]);
+print("{1: 2} && {3: 4} == ", {1: 2} && {3: 4});
+print();
+
+print("1 || 2 == ", 1 || 2);
+print("1.3 || 2.7 == ", 1.3 || 2.7);
+print("\\"hello\\" || \\"world\\" == ", "hello" || "world");
+print("true || false == ", true || false);
+print("[1, 2] || [3, 4] == ", [1, 2] || [3, 4]);
+print("{1: 2} || {3: 4} == ", {1: 2} || {3: 4});
+print();
+
+print("!1 == ", !1);
+print("!1.3 == ", !1.3);
+print("!\\"hello\\" == ", !"hello");
+print("!true == ", !true);
+print("![] == ", ![]);
+print("!{} == ", !{});
+print();
+
+print("-1 == ", -1);
+print("-1.3 == ", -1.3);
+print();
+
+print("+1 == ", +1);
+print("+1.3 == ", +1.3);
+print();
+
+print("~1 == ", ~1);
+print();
+`;
+
+export const singleNumber = `let single_number = fn(nums) {
+  let result = 0;
+  let i = 0;
+  while (i < len(nums)) {
+    result = result ^ nums[i];
+    i = i + 1;
+  };
+  return result;
+};
+
+print(single_number([1, 2, 3, 4, 1, 2, 3]));
+`;
+
+export const popCount = `let pop_count = fn(n) {
+  let count = 0;
+  while (n != 0) {
+    if (n & 1 == 1) {
+      count = count + 1;
+    };
+    n = n >> 1;
+  };
+  return count;
+};
+
+let faster_pop_count = fn(n) {
+  let count = 0;
+  while (n != 0) {
+    count = count + 1;
+    n = n & (n - 1);
+  };
+  return count;
+};
+
+"101010101010101010101010101010101010101010101010101010101010101";
+print(pop_count(6148914691236517205));
+`;
+
 export const examples = {
   Fibonacci: fibonacci,
   "Tower of Hanoi": towerOfHanoi,
   Factorial: factorial,
+  Operators: operators,
   Arrays: arrayExamples,
   Hashes: hashExamples,
   "Two Sum": twoSum,
+  "Single Number": singleNumber,
+  "Pop Count": popCount,
 };
