@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/JasirZaeem/ape/object"
 	"github.com/JasirZaeem/ape/pkg/ast"
+	"math"
 )
 
 var (
@@ -193,11 +194,14 @@ func evalBangOperatorExpression(right object.Object) object.Object {
 }
 
 func evalMinusOperatorExpression(right object.Object) object.Object {
-	if right.Type() != object.INTEGER_OBJ {
-		return newError("unknown operator: -%s", right.Type())
+	if right.Type() == object.INTEGER_OBJ {
+		value := right.(*object.Integer).Value
+		return &object.Integer{Value: -value}
+	} else if right.Type() == object.FLOAT_OBJ {
+		value := right.(*object.Float).Value
+		return &object.Float{Value: -value}
 	}
-
-	return &object.Integer{Value: -right.(*object.Integer).Value}
+	return newError("unknown operator: -%s", right.Type())
 }
 
 func evalInfixOperatorExpression(operator string, left, right object.Object) object.Object {
@@ -221,6 +225,19 @@ func evalInfixOperatorExpression(operator string, left, right object.Object) obj
 	}
 }
 
+func powInt(x, y int64) int64 {
+	if y == 0 {
+		return 1
+	}
+	if y == 1 {
+		return x
+	}
+	if y&1 == 0 {
+		return powInt(x*x, y/2)
+	}
+	return x * powInt(x*x, y/2)
+}
+
 func evalIntegerInfixExpression(operator string, left, right object.Object) object.Object {
 	leftVal := left.(*object.Integer).Value
 	rightVal := right.(*object.Integer).Value
@@ -237,6 +254,8 @@ func evalIntegerInfixExpression(operator string, left, right object.Object) obje
 			return newError("division by zero")
 		}
 		return &object.Integer{Value: leftVal / rightVal}
+	case "**":
+		return &object.Integer{Value: powInt(leftVal, rightVal)}
 	case "<<":
 		return &object.Integer{Value: leftVal << rightVal}
 	case ">>":
@@ -280,6 +299,8 @@ func evalFloatInfixExpression(operator string, left, right object.Object) object
 			return newError("division by zero")
 		}
 		return &object.Float{Value: leftVal / rightVal}
+	case "**":
+		return &object.Float{Value: math.Pow(leftVal, rightVal)}
 	case "<":
 		return nativeBoolToBooleanObject(leftVal < rightVal)
 	case "<=":

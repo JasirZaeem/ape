@@ -85,7 +85,12 @@ func (l *Lexer) NextToken() token.Token {
 	case '/':
 		tok = newToken(token.SLASH, l.ch)
 	case '*':
-		tok = newToken(token.ASTERISK, l.ch)
+		if l.peekChar() == '*' {
+			l.readChar()
+			tok = token.Token{Type: token.EXPONENT, Literal: "**"}
+		} else {
+			tok = newToken(token.ASTERISK, l.ch)
+		}
 	case '<':
 		if l.peekChar() == '=' {
 			l.readChar()

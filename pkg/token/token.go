@@ -24,6 +24,7 @@ const (
 	OR       = "||"
 	ASTERISK = "*"
 	SLASH    = "/"
+	EXPONENT = "**"
 
 	LEFT_SHIFT  = "<<"
 	RIGHT_SHIFT = ">>"

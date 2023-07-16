@@ -151,6 +151,8 @@ func (f *Formatter) formatPrefixExpression(prefixExpression *ast.PrefixExpressio
 
 func operatorToPrecedence(operator string) int {
 	switch operator {
+	case "**":
+		return parser.EXPONENTIATION
 	case "+", "-":
 		return parser.SUM
 	case "*", "/":

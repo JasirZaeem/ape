@@ -39,6 +39,7 @@ const (
 	SUM
 	PRODUCT
 	PREFIX
+	EXPONENTIATION
 	CALL
 	INDEX
 )
@@ -62,6 +63,7 @@ var precedences = map[token.TokenType]int{
 	token.MINUS:       SUM,
 	token.SLASH:       PRODUCT,
 	token.ASTERISK:    PRODUCT,
+	token.EXPONENT:    EXPONENTIATION,
 	token.LPAREN:      CALL,
 	token.LBRACKET:    INDEX,
 }
@@ -92,6 +94,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.MINUS, p.parseInfixExpression)
 	p.registerInfix(token.SLASH, p.parseInfixExpression)
 	p.registerInfix(token.ASTERISK, p.parseInfixExpression)
+	p.registerInfix(token.EXPONENT, p.parseInfixExpression)
 	p.registerInfix(token.LEFT_SHIFT, p.parseInfixExpression)
 	p.registerInfix(token.RIGHT_SHIFT, p.parseInfixExpression)
 	p.registerInfix(token.BIT_AND, p.parseInfixExpression)
