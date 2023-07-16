@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/JasirZaeem/ape/object"
 	"strconv"
+	"strings"
 )
 
 var builtins = map[string]*object.Builtin{
@@ -206,17 +207,19 @@ var builtins = map[string]*object.Builtin{
 			return nativeBoolToBooleanObject(isTruthy(args[0]))
 		},
 	},
-	// Array functions
+	// Array and string functions
 	"first": {
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 1 {
 				return newError("wrong number of arguments. got = %d, want = 1", len(args))
 			}
-			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `first` must be ARRAY, got %s", args[0].Type())
+			if args[0].Type() == object.ARRAY_OBJ {
+				return arrFirst(args[0].(*object.Array))
+			} else if args[0].Type() == object.STRING_OBJ {
+				return strFirst(args[0].(*object.String))
 			}
 
-			return arrFirst(args[0].(*object.Array))
+			return newError("argument to `first` must be ARRAY or STRING, got %s", args[0].Type())
 		},
 	},
 	"last": {
@@ -224,11 +227,13 @@ var builtins = map[string]*object.Builtin{
 			if len(args) != 1 {
 				return newError("wrong number of arguments. got = %d, want = 1", len(args))
 			}
-			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `last` must be ARRAY, got %s", args[0].Type())
+			if args[0].Type() == object.ARRAY_OBJ {
+				return arrLast(args[0].(*object.Array))
+			} else if args[0].Type() == object.STRING_OBJ {
+				return strLast(args[0].(*object.String))
 			}
 
-			return arrLast(args[0].(*object.Array))
+			return newError("argument to `last` must be ARRAY or STRING, got %s", args[0].Type())
 		},
 	},
 	"rest": {
@@ -236,11 +241,13 @@ var builtins = map[string]*object.Builtin{
 			if len(args) != 1 {
 				return newError("wrong number of arguments. got = %d, want = 1", len(args))
 			}
-			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `rest` must be ARRAY, got %s", args[0].Type())
+			if args[0].Type() == object.ARRAY_OBJ {
+				return arrRest(args[0].(*object.Array))
+			} else if args[0].Type() == object.STRING_OBJ {
+				return strRest(args[0].(*object.String))
 			}
 
-			return arrRest(args[0].(*object.Array))
+			return newError("argument to `rest` must be ARRAY or STRING, got %s", args[0].Type())
 		},
 	},
 	"init": {
@@ -248,11 +255,13 @@ var builtins = map[string]*object.Builtin{
 			if len(args) != 1 {
 				return newError("wrong number of arguments. got = %d, want = 1", len(args))
 			}
-			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `init` must be ARRAY, got %s", args[0].Type())
+			if args[0].Type() == object.ARRAY_OBJ {
+				return arrInit(args[0].(*object.Array))
+			} else if args[0].Type() == object.STRING_OBJ {
+				return strInit(args[0].(*object.String))
 			}
 
-			return arrInit(args[0].(*object.Array))
+			return newError("argument to `init` must be ARRAY or STRING, got %s", args[0].Type())
 		},
 	},
 	"at": {
@@ -260,14 +269,19 @@ var builtins = map[string]*object.Builtin{
 			if len(args) != 2 {
 				return newError("wrong number of arguments. got = %d, want = 2", len(args))
 			}
-			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `at` must be ARRAY, got %s", args[0].Type())
-			}
-			if args[1].Type() != object.INTEGER_OBJ {
-				return newError("index to `at` must be INTEGER, got %s", args[1].Type())
+			if args[0].Type() == object.ARRAY_OBJ {
+				if args[1].Type() != object.INTEGER_OBJ {
+					return newError("index to `at` must be INTEGER, got %s", args[1].Type())
+				}
+				return arrAt(args[0].(*object.Array), args[1].(*object.Integer).Value)
+			} else if args[0].Type() == object.STRING_OBJ {
+				if args[1].Type() != object.INTEGER_OBJ {
+					return newError("index to `at` must be INTEGER, got %s", args[1].Type())
+				}
+				return strAt(args[0].(*object.String), args[1].(*object.Integer).Value)
 			}
 
-			return arrAt(args[0].(*object.Array), args[1].(*object.Integer).Value)
+			return newError("argument to `at` must be ARRAY or STRING, got %s", args[0].Type())
 		},
 	},
 	"set_at": {
@@ -275,14 +289,19 @@ var builtins = map[string]*object.Builtin{
 			if len(args) != 3 {
 				return newError("wrong number of arguments. got = %d, want = 3", len(args))
 			}
-			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `set_at` must be ARRAY, got %s", args[0].Type())
-			}
-			if args[1].Type() != object.INTEGER_OBJ {
-				return newError("index to `set_at` must be INTEGER, got %s", args[1].Type())
+			if args[0].Type() == object.ARRAY_OBJ {
+				if args[1].Type() != object.INTEGER_OBJ {
+					return newError("index to `set_at` must be INTEGER, got %s", args[1].Type())
+				}
+				return arrSetAt(args[0].(*object.Array), args[1].(*object.Integer).Value, args[2])
+			} else if args[0].Type() == object.STRING_OBJ {
+				if args[1].Type() != object.INTEGER_OBJ {
+					return newError("index to `set_at` must be INTEGER, got %s", args[1].Type())
+				}
+				return strSetAt(args[0].(*object.String), args[1].(*object.Integer).Value, args[2])
 			}
 
-			return arrSetAt(args[0].(*object.Array), args[1].(*object.Integer).Value, args[2])
+			return newError("argument to `set_at` must be ARRAY or STRING, got %s", args[0].Type())
 		},
 	},
 	"push": {
@@ -290,11 +309,13 @@ var builtins = map[string]*object.Builtin{
 			if len(args) != 2 {
 				return newError("wrong number of arguments. got = %d, want = 2", len(args))
 			}
-			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `push` must be ARRAY, got %s", args[0].Type())
+			if args[0].Type() == object.ARRAY_OBJ {
+				return arrPush(args[0].(*object.Array), args[1])
+			} else if args[0].Type() == object.STRING_OBJ {
+				return strPush(args[0].(*object.String), args[1])
 			}
 
-			return arrPush(args[0].(*object.Array), args[1])
+			return newError("argument to `push` must be ARRAY or STRING, got %s", args[0].Type())
 		},
 	},
 	"pop": {
@@ -302,11 +323,13 @@ var builtins = map[string]*object.Builtin{
 			if len(args) != 1 {
 				return newError("wrong number of arguments. got = %d, want = 1", len(args))
 			}
-			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `pop` must be ARRAY, got %s", args[0].Type())
+			if args[0].Type() == object.ARRAY_OBJ {
+				return arrPop(args[0].(*object.Array))
+			} else if args[0].Type() == object.STRING_OBJ {
+				return strPop(args[0].(*object.String))
 			}
 
-			return arrPop(args[0].(*object.Array))
+			return newError("argument to `pop` must be ARRAY or STRING, got %s", args[0].Type())
 		},
 	},
 	"push_front": {
@@ -314,11 +337,13 @@ var builtins = map[string]*object.Builtin{
 			if len(args) != 2 {
 				return newError("wrong number of arguments. got = %d, want = 2", len(args))
 			}
-			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `push_front` must be ARRAY, got %s", args[0].Type())
+			if args[0].Type() == object.ARRAY_OBJ {
+				return arrPushFront(args[0].(*object.Array), args[1])
+			} else if args[0].Type() == object.STRING_OBJ {
+				return strPushFront(args[0].(*object.String), args[1])
 			}
 
-			return arrPushFront(args[0].(*object.Array), args[1])
+			return newError("argument to `push_front` must be ARRAY or STRING, got %s", args[0].Type())
 		},
 	},
 	"pop_front": {
@@ -326,11 +351,13 @@ var builtins = map[string]*object.Builtin{
 			if len(args) != 1 {
 				return newError("wrong number of arguments. got = %d, want = 1", len(args))
 			}
-			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `pop_front` must be ARRAY, got %s", args[0].Type())
+			if args[0].Type() == object.ARRAY_OBJ {
+				return arrPopFront(args[0].(*object.Array))
+			} else if args[0].Type() == object.STRING_OBJ {
+				return strPopFront(args[0].(*object.String))
 			}
 
-			return arrPopFront(args[0].(*object.Array))
+			return newError("argument to `pop_front` must be ARRAY or STRING, got %s", args[0].Type())
 		},
 	},
 	"insert": {
@@ -338,14 +365,19 @@ var builtins = map[string]*object.Builtin{
 			if len(args) != 3 {
 				return newError("wrong number of arguments. got = %d, want = 3", len(args))
 			}
-			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `insert` must be ARRAY, got %s", args[0].Type())
-			}
-			if args[1].Type() != object.INTEGER_OBJ {
-				return newError("index to `insert` must be INTEGER, got %s", args[1].Type())
+			if args[0].Type() == object.ARRAY_OBJ {
+				if args[1].Type() != object.INTEGER_OBJ {
+					return newError("index to `insert` must be INTEGER, got %s", args[1].Type())
+				}
+				return arrInsert(args[0].(*object.Array), args[1].(*object.Integer).Value, args[2])
+			} else if args[0].Type() == object.STRING_OBJ {
+				if args[1].Type() != object.INTEGER_OBJ {
+					return newError("index to `insert` must be INTEGER, got %s", args[1].Type())
+				}
+				return strInsert(args[0].(*object.String), args[1].(*object.Integer).Value, args[2])
 			}
 
-			return arrInsert(args[0].(*object.Array), args[1].(*object.Integer).Value, args[2])
+			return newError("argument to `insert` must be ARRAY or STRING, got %s", args[0].Type())
 		},
 	},
 	"remove": {
@@ -353,14 +385,19 @@ var builtins = map[string]*object.Builtin{
 			if len(args) != 2 {
 				return newError("wrong number of arguments. got = %d, want = 2", len(args))
 			}
-			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `remove` must be ARRAY, got %s", args[0].Type())
-			}
-			if args[1].Type() != object.INTEGER_OBJ {
-				return newError("index to `remove` must be INTEGER, got %s", args[1].Type())
+			if args[0].Type() == object.ARRAY_OBJ {
+				if args[1].Type() != object.INTEGER_OBJ {
+					return newError("index to `remove` must be INTEGER, got %s", args[1].Type())
+				}
+				return arrRemove(args[0].(*object.Array), args[1].(*object.Integer).Value)
+			} else if args[0].Type() == object.STRING_OBJ {
+				if args[1].Type() != object.INTEGER_OBJ {
+					return newError("index to `remove` must be INTEGER, got %s", args[1].Type())
+				}
+				return strRemove(args[0].(*object.String), args[1].(*object.Integer).Value)
 			}
 
-			return arrRemove(args[0].(*object.Array), args[1].(*object.Integer).Value)
+			return newError("argument to `remove` must be ARRAY or STRING, got %s", args[0].Type())
 		},
 	},
 	"reverse": {
@@ -368,11 +405,13 @@ var builtins = map[string]*object.Builtin{
 			if len(args) != 1 {
 				return newError("wrong number of arguments. got = %d, want = 1", len(args))
 			}
-			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `reverse` must be ARRAY, got %s", args[0].Type())
+			if args[0].Type() == object.ARRAY_OBJ {
+				return arrReverse(args[0].(*object.Array))
+			} else if args[0].Type() == object.STRING_OBJ {
+				return strReverse(args[0].(*object.String))
 			}
 
-			return arrReverse(args[0].(*object.Array))
+			return newError("argument to `reverse` must be ARRAY or STRING, got %s", args[0].Type())
 		},
 	},
 	// Hash functions
@@ -478,6 +517,113 @@ var builtins = map[string]*object.Builtin{
 			retHash := object.DeepCopyHash(hash)
 			delete(retHash.Pairs, hashKey.HashKey())
 			return retHash
+		},
+	},
+	// String functions
+	"char": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got = %d, want = 1", len(args))
+			}
+			if args[0].Type() != object.INTEGER_OBJ {
+				return newError("argument to `char` must be INTEGER, got %s", args[0].Type())
+			}
+
+			integer := args[0].(*object.Integer).Value
+
+			if integer < 0 || integer > 255 {
+				return newError("argument to `char` must be between 0 and 255, got %d", integer)
+			}
+
+			return &object.String{Value: string([]byte{byte(integer)})}
+		},
+	},
+	"ascii": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got = %d, want = 1", len(args))
+			}
+			if args[0].Type() != object.STRING_OBJ {
+				return newError("argument to `ascii` must be STRING, got %s", args[0].Type())
+			}
+
+			str := args[0].(*object.String).Value
+
+			if len(str) != 1 {
+				return newError("argument to `ascii` must be a single character, got %s", str)
+			}
+
+			return &object.Integer{Value: int64(str[0])}
+		},
+	},
+	"split": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 2 {
+				return newError("wrong number of arguments. got = %d, want = 2", len(args))
+			}
+			if args[0].Type() != object.STRING_OBJ {
+				return newError("first argument to `split` must be STRING, got %s", args[0].Type())
+			}
+			if args[1].Type() != object.STRING_OBJ {
+				return newError("second argument to `split` must be STRING, got %s", args[1].Type())
+			}
+
+			str := args[0].(*object.String).Value
+			sep := args[1].(*object.String).Value
+
+			var parts []object.Object
+			for _, part := range strings.Split(str, sep) {
+				parts = append(parts, &object.String{Value: part})
+			}
+			return &object.Array{Elements: parts}
+		},
+	},
+	"split_once": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 2 {
+				return newError("wrong number of arguments. got = %d, want = 2", len(args))
+			}
+			if args[0].Type() != object.STRING_OBJ {
+				return newError("first argument to `split_once` must be STRING, got %s", args[0].Type())
+			}
+			if args[1].Type() != object.STRING_OBJ {
+				return newError("second argument to `split_once` must be STRING, got %s", args[1].Type())
+			}
+
+			str := args[0].(*object.String).Value
+			sep := args[1].(*object.String).Value
+
+			var parts []object.Object
+			for _, part := range strings.SplitN(str, sep, 2) {
+				parts = append(parts, &object.String{Value: part})
+			}
+			return &object.Array{Elements: parts}
+
+		},
+	},
+	"join": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 2 {
+				return newError("wrong number of arguments. got = %d, want = 2", len(args))
+			}
+			if args[0].Type() != object.ARRAY_OBJ {
+				return newError("first argument to `join` must be ARRAY, got %s", args[0].Type())
+			}
+			if args[1].Type() != object.STRING_OBJ {
+				return newError("second argument to `join` must be STRING, got %s", args[1].Type())
+			}
+
+			arr := args[0].(*object.Array)
+			sep := args[1].(*object.String).Value
+
+			var parts []string
+			for _, part := range arr.Elements {
+				if part.Type() != object.STRING_OBJ {
+					return newError("elements of array passed to `join` must be STRING, got %s", part.Type())
+				}
+				parts = append(parts, part.(*object.String).Value)
+			}
+			return &object.String{Value: strings.Join(parts, sep)}
 		},
 	},
 }
@@ -625,4 +771,143 @@ func arrReverse(arr *object.Array) object.Object {
 		newElements[i] = object.DeepCopy(arr.Elements[j])
 	}
 	return &object.Array{Elements: newElements}
+}
+
+// String function implementations
+func strFirst(str *object.String) object.Object {
+	if len(str.Value) > 0 {
+		return &object.String{Value: string(str.Value[0])}
+	}
+	return NULL
+}
+
+func strLast(str *object.String) object.Object {
+	length := len(str.Value)
+	if length > 0 {
+		return &object.String{Value: string(str.Value[length-1])}
+	}
+	return NULL
+}
+
+func strRest(str *object.String) object.Object {
+	length := len(str.Value)
+	if length > 0 {
+		return &object.String{Value: string(str.Value[1:length])}
+	}
+	return NULL
+}
+
+func strInit(str *object.String) object.Object {
+	length := len(str.Value)
+	if length > 0 {
+		return &object.String{Value: string(str.Value[0 : length-1])}
+	}
+	return NULL
+}
+
+func strAt(str *object.String, index int64) object.Object {
+	if index < 0 {
+		index = int64(len(str.Value)) + index
+	}
+
+	length := len(str.Value)
+	if index < 0 || index > int64(length-1) {
+		return NULL
+	}
+	return &object.String{Value: string(str.Value[index])}
+}
+
+func strSetAt(str *object.String, index int64, val object.Object) object.Object {
+	if val.Type() != object.STRING_OBJ {
+		return newError("argument to `set_at` must be STRING, got %s", val.Type())
+	}
+	if len(val.(*object.String).Value) != 1 {
+		return newError("argument to `set_at` must be single character, got %d characters", len(val.(*object.String).Value))
+	}
+
+	length := len(str.Value)
+	if index < 0 {
+		index = int64(length) + index
+	}
+
+	if index < 0 || index > int64(length-1) {
+		return newError("index out of range: %d", index)
+	}
+
+	s := []byte(str.Value)
+	s[index] = val.(*object.String).Value[0]
+	return &object.String{Value: string(s)}
+}
+
+func strPush(str *object.String, val object.Object) object.Object {
+	if val.Type() != object.STRING_OBJ {
+		return newError("argument to `push` must be STRING, got %s", val.Type())
+	}
+
+	return &object.String{Value: str.Value + val.(*object.String).Value}
+}
+
+func strPop(str *object.String) object.Object {
+	length := len(str.Value)
+	if length > 0 {
+		return &object.String{Value: str.Value[:length-1]}
+	}
+	return NULL
+}
+
+func strPushFront(str *object.String, val object.Object) object.Object {
+	if val.Type() != object.STRING_OBJ {
+		return newError("argument to `push_front` must be STRING, got %s", val.Type())
+	}
+
+	return &object.String{Value: val.(*object.String).Value + str.Value}
+}
+
+func strPopFront(str *object.String) object.Object {
+	length := len(str.Value)
+	if length > 0 {
+		return &object.String{Value: str.Value[1:length]}
+	}
+	return NULL
+}
+
+func strInsert(str *object.String, index int64, val object.Object) object.Object {
+	if val.Type() != object.STRING_OBJ {
+		return newError("argument to `insert` must be STRING, got %s", val.Type())
+	}
+
+	length := len(str.Value)
+
+	if index < 0 {
+		index = int64(length) + index
+	}
+
+	if index < 0 || index > int64(length) {
+		return newError("index out of range: %d", index)
+	}
+
+	return &object.String{Value: str.Value[:index] + val.(*object.String).Value + str.Value[index:]}
+}
+
+func strRemove(str *object.String, index int64) object.Object {
+	length := len(str.Value)
+
+	if index < 0 {
+		index = int64(length) + index
+	}
+
+	if index < 0 || index > int64(length-1) {
+		return newError("index out of range: %d", index)
+	}
+
+	return &object.String{Value: str.Value[:index] + str.Value[index+1:]}
+}
+
+func strReverse(str *object.String) object.Object {
+	length := len(str.Value)
+	newStr := make([]byte, length, length)
+	for i, j := 0, length-1; i < length; i, j = i+1, j-1 {
+		newStr[i] = str.Value[j]
+	}
+	return &object.String{Value: string(newStr)}
 }

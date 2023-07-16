@@ -33,6 +33,7 @@ fact(5);
 
 export const arrayExamples = `let arr = [1, 2, 3, 4, 5];
 print("arr == ", arr);
+print("len(arr) == ", len(arr));
 print();
 
 print("arr[0] == ", arr[0]);
@@ -69,6 +70,58 @@ print();
 
 print("set_at(arr, 2, 10) == ", set_at(arr, 2, 10));
 print("set_at(arr, -2, 10) == ", set_at(arr, -2, 10));
+print();
+`;
+
+export const stringExamples = `let s = "hello world";
+print("s == ", s);
+print("len(s) == ", len(s));
+print();
+
+print("s[0] == ", s[0]);
+print("s[1] == ", s[1]);
+print();
+
+print("split(s, \\"\\") == ", split(s, ""));
+print("split(s, \\"o\\") == ", split(s, "o"));
+print("split_once(s, \\"o\\") == ", split_once(s, "o"));
+print("split_once(s, \\"z\\") == ", split_once(s, "z"));
+print();
+
+print("join([\\"hello\\", \\"world\\"], \\" \\\") == ", join(["hello", "world"], " "));
+print("join([\\"hello\\", \\"world\\"], \\"\\") == ", join(["hello", "world"], ""));
+print();
+
+print("first(s) == ", first(s));
+print("last(s) == ", last(s));
+print();
+
+print("rest(s) == ", rest(s));
+print("rest(rest(s)) == ", rest(rest(s)));
+print("init(s) == ", init(s));
+print("init(init(s)) == ", init(init(s)));
+print();
+
+print("push(s, \\"!\\")) == ", push(s, "!"));
+print("pop(s) == ", pop(s));
+print("push_front(s, \\"!\\")) == ", push_front(s, "!"));
+print("pop_front(s) == ", pop_front(s));
+print();
+
+print("insert(s, 2, \\"!\\")) == ", insert(s, 2, "!"));
+print("remove(s, 2) == ", remove(s, 2));
+print();
+
+print("reverse(s) == ", reverse(s));
+print();
+
+print("at(s, 2) == ", at(s, 2));
+print("at(s, 10) == ", at(s, 10));
+print("at(s, -2) == ", at(s, -2));
+print();
+
+print("set_at(s, 2, \\"!\\")) == ", set_at(s, 2, "!"));
+print("set_at(s, -2, \\"!\\")) == ", set_at(s, -2, "!"));
 print();
 `;
 
@@ -271,6 +324,7 @@ export const examples = {
   Factorial: factorial,
   Operators: operators,
   Arrays: arrayExamples,
+  Strings: stringExamples,
   Hashes: hashExamples,
   "Two Sum": twoSum,
   "Single Number": singleNumber,
