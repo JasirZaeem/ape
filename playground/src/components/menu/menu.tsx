@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/tooltip.tsx";
 import { ExampleSelector } from "@/components/menu/exampleSelector.tsx";
 import { ApeCodeSource, ApeResultType } from "@/hooks/useApe.ts";
+import { useApeStore } from "@/hooks/useApeStore.ts";
 import { useApe } from "@/apeContext.tsx";
 
 const themeIcons = {
@@ -45,18 +46,14 @@ export function Menu() {
   const { theme, setTheme } = useTheme();
   const CurrentThemeIcon = themeIcons[theme];
 
-  const {
-    code,
-    setCode,
-    setAstNow,
-    formatCode,
-    selectedCode,
-    getAst,
-    runCode,
-    resetApe,
-    astViewerVisible,
-    setAstViewerVisible,
-  } = useApe();
+  const { formatCode, getAst, runCode, resetApe } = useApe();
+
+  const setAst = useApeStore((state) => state.setAst);
+  const code = useApeStore((state) => state.code);
+  const setCode = useApeStore((state) => state.setCode);
+  const astViewerVisible = useApeStore((state) => state.astViewerVisible);
+  const setAstViewerVisible = useApeStore((state) => state.setAstViewerVisible);
+  const selectedCode = useApeStore((state) => state.selectedCode);
 
   function codeFormatHandler() {
     const result = formatCode(code);
@@ -74,7 +71,7 @@ export function Menu() {
     setAstViewerVisible(true);
     const result = getAst(code);
     if (result.type === ApeResultType.JSON_AST) {
-      setAstNow(result.value);
+      setAst(result.value);
     }
   }
 

@@ -9,13 +9,13 @@ import { Repl } from "@/components/repl";
 import { Editor } from "@/components/workspace/editor.tsx";
 import { AstViewer } from "@/components/workspace/astViewer.tsx";
 import { useRef } from "react";
-import { useApe } from "@/apeContext.tsx";
 import { Button } from "@/components/ui/button.tsx";
+import { useApeStore } from "@/hooks/useApeStore.ts";
 
 export function Playground() {
   const astPanelRef = useRef<ImperativePanelHandle>(null);
-
-  const { astViewerVisible, setAstViewerVisible } = useApe();
+  const astViewerVisible = useApeStore((state) => state.astViewerVisible);
+  const setAstViewerVisible = useApeStore((state) => state.setAstViewerVisible);
 
   return (
     <PanelGroup direction="vertical">

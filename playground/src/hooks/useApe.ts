@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useApeStore } from "@/hooks/useApeStore.ts";
 
 export enum ApeResultType {
   // E.g. "let x = 1"
@@ -62,7 +63,7 @@ let NEXT_ORDER = 0;
 
 export function useApeInterpreter() {
   const [ready, setReady] = useState(false);
-  const [history, setHistory] = useState<ApeInterpreterHistory[]>([]);
+  const updateHistory = useApeStore((state) => state.updateHistory);
   const goRef = useRef<any>();
 
   useEffect(() => {
@@ -71,7 +72,7 @@ export function useApeInterpreter() {
     const originalLog = console.log;
     // @ts-ignore
     console.log = (...args) => {
-      setHistory((results) => [
+      updateHistory((results) => [
         ...results,
         {
           type: ApeResultType.STDOUT,
@@ -104,10 +105,9 @@ export function useApeInterpreter() {
 
   return {
     ready,
-    history,
     runCode: (code: string, source: ApeCodeSource) => {
       const order = NEXT_ORDER++;
-      setHistory((results) => [
+      updateHistory((results) => [
         ...results,
         { type: source, value: code, order, id: results.length },
       ]);
@@ -119,7 +119,7 @@ export function useApeInterpreter() {
             type: ApeResultType.WASM_ERROR,
             value: "Interpreter not ready",
           };
-      setHistory((results) => [
+      updateHistory((results) => [
         ...results,
         { ...result, order, id: results.length },
       ]);
@@ -130,7 +130,10 @@ export function useApeInterpreter() {
       // @ts-ignore
       const res = formatApeProgram(code);
       if (res.type === ApeResultType.PARSER_ERROR) {
-        setHistory((results) => [...results, { ...res, id: results.length }]);
+        updateHistory((results) => [
+          ...results,
+          { ...res, id: results.length },
+        ]);
         return res;
       }
       return res;
@@ -141,7 +144,10 @@ export function useApeInterpreter() {
       const res = getApeAst(code);
       if (res.type !== ApeResultType.JSON_AST) {
         logErrors &&
-          setHistory((results) => [...results, { ...res, id: results.length }]);
+          updateHistory((results) => [
+            ...results,
+            { ...res, id: results.length },
+          ]);
         return res;
       }
       try {

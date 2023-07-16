@@ -1,85 +1,35 @@
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  useContext,
-  useState,
-} from "react";
+import { createContext, ReactNode, useContext } from "react";
 import {
   ApeCodeSource,
-  ApeInterpreterHistory,
   ApeResultType,
   FormatCodeResult,
   GetAstResult,
   useApeInterpreter,
 } from "@/hooks/useApe.ts";
-import { fibonacci } from "@/codeExamples.ts";
-import { useDebouncedState } from "@/hooks/useDebouncedState.ts";
-import { useLocalState } from "@/hooks/useLocalState.ts";
 
 type ApeContextType = {
-  history: ApeInterpreterHistory[];
   runCode: (code: string, source: ApeCodeSource) => void;
   formatCode: (code: string) => FormatCodeResult;
   getAst: (code: string) => GetAstResult;
   resetApe: () => void;
-  code: string;
-  setCode: Dispatch<SetStateAction<string>>;
-  ast: unknown;
-  setDebouncedAst: Dispatch<SetStateAction<unknown>>;
-  setAstNow: Dispatch<SetStateAction<unknown>>;
-  selectedCode: string;
-  setSelectedCode: Dispatch<SetStateAction<string>>;
-  astViewerVisible: boolean;
-  setAstViewerVisible: Dispatch<SetStateAction<boolean>>;
 };
 
 const ApeContext = createContext<ApeContextType>({
-  history: [],
   runCode: () => {},
   formatCode: () => ({ type: "FORMATTED", value: "" }),
   getAst: () => ({ type: ApeResultType.JSON_AST, value: {} }),
   resetApe: () => {},
-  code: "",
-  setCode: () => {},
-  ast: {},
-  setDebouncedAst: () => {},
-  setAstNow: () => {},
-  selectedCode: "",
-  setSelectedCode: () => {},
-  astViewerVisible: false,
-  setAstViewerVisible: () => {},
 });
 
 export function ApeProvider({ children }: { children: ReactNode }) {
-  const { history, runCode, formatCode, getAst, resetApe } =
-    useApeInterpreter();
-  const [code, setCode] = useLocalState(fibonacci, "code");
-  const [ast, setDebouncedAst, setAstNow] = useDebouncedState<unknown>({}, 200);
-  const [selectedCode, setSelectedCode] = useState("");
-  const [astViewerVisible, setAstViewerVisible] = useLocalState(
-    false,
-    "astViewerVisible"
-  );
-
+  const { runCode, formatCode, getAst, resetApe } = useApeInterpreter();
   return (
     <ApeContext.Provider
       value={{
-        history,
         runCode,
         formatCode,
         getAst,
         resetApe,
-        code,
-        setCode,
-        ast,
-        setDebouncedAst,
-        setAstNow,
-        selectedCode,
-        setSelectedCode,
-        astViewerVisible,
-        setAstViewerVisible,
       }}
     >
       {children}

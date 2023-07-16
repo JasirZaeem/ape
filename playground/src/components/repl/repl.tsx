@@ -11,6 +11,7 @@ import { ApeCodeSource, ApeInterpreterHistory } from "@/hooks/useApe.ts";
 import { cn } from "@/lib/utils.ts";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { Button } from "@/components/ui/button.tsx";
+import { useApeStore } from "@/hooks/useApeStore.ts";
 import { useApe } from "@/apeContext.tsx";
 
 const IN_TYPES: string[] = [ApeCodeSource.EDITOR, ApeCodeSource.REPL];
@@ -81,7 +82,8 @@ export function Repl() {
   const autoScroll = useRef(true);
   const [replInput, setReplInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-  const { history, runCode } = useApe();
+  const history = useApeStore((state) => state.history);
+  const { runCode } = useApe();
 
   useEffect(() => {
     if (containerRef.current && autoScroll.current) {

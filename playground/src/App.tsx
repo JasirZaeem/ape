@@ -2,12 +2,15 @@ import { Separator } from "@/components/ui/separator.tsx";
 import { Menu } from "@/components/menu";
 import { Playground } from "@/components/workspace/playground.tsx";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import { ApeProvider } from "@/apeContext.tsx";
 
 function App() {
   return (
     <div className="bg-background h-full max-h-full grid grid-rows-layout w-full max-w-full overflow-hidden">
-      <Menu />
-      <Playground />
+      <ApeProvider>
+        <Menu />
+        <Playground />
+      </ApeProvider>
       <footer>
         <Separator />
 

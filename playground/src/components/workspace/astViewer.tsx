@@ -1,8 +1,6 @@
 import { JSONTree } from "react-json-tree";
-import { useApe } from "@/apeContext.tsx";
-import { useEffect } from "react";
-import { ApeResultType } from "@/hooks/useApe.ts";
 import { useTheme } from "@/themeContext.tsx";
+import { useApeStore } from "@/hooks/useApeStore.ts";
 
 const darkTheme = {
   base00: "#011627",
@@ -43,19 +41,11 @@ const lightTheme = {
 };
 
 export function AstViewer() {
-  const { code, ast, getAst, setDebouncedAst } = useApe();
+  const ast = useApeStore((state) => state.ast);
+
   const { effectiveTheme } = useTheme();
   const theme = effectiveTheme === "light" ? lightTheme : darkTheme;
 
-  useEffect(() => {
-    setDebouncedAst((prevAst: unknown) => {
-      const result = getAst(code);
-      if (result.type === ApeResultType.JSON_AST) {
-        return result.value;
-      }
-      return prevAst;
-    });
-  }, [code]);
   return (
     <div className="overflow-auto w-full h-full bg-[#F0F0F0] dark:bg-[#011627] pl-2">
       <JSONTree
