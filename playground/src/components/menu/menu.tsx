@@ -4,6 +4,7 @@ import {
   DesktopIcon,
   EyeClosedIcon,
   EyeOpenIcon,
+  InfoCircledIcon,
   MoonIcon,
   PlayIcon,
   ResetIcon,
@@ -228,6 +229,26 @@ export function Menu() {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <TooltipProvider delayDuration={500}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={() => setCode("")}
+                  variant="outline"
+                  size="icon"
+                  asChild
+                >
+                  <a href="https://github.com/JasirZaeem/ape">
+                    <InfoCircledIcon />
+                  </a>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Check Documentation</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </nav>
     </div>
