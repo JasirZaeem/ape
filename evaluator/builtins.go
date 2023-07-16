@@ -215,11 +215,8 @@ var builtins = map[string]*object.Builtin{
 			if args[0].Type() != object.ARRAY_OBJ {
 				return newError("argument to `first` must be ARRAY, got %s", args[0].Type())
 			}
-			arr := args[0].(*object.Array)
-			if len(arr.Elements) > 0 {
-				return object.DeepCopy(arr.Elements[0])
-			}
-			return NULL
+
+			return arrFirst(args[0].(*object.Array))
 		},
 	},
 	"last": {
@@ -230,12 +227,8 @@ var builtins = map[string]*object.Builtin{
 			if args[0].Type() != object.ARRAY_OBJ {
 				return newError("argument to `last` must be ARRAY, got %s", args[0].Type())
 			}
-			arr := args[0].(*object.Array)
-			length := len(arr.Elements)
-			if length > 0 {
-				return object.DeepCopy(arr.Elements[length-1])
-			}
-			return NULL
+
+			return arrLast(args[0].(*object.Array))
 		},
 	},
 	"rest": {
@@ -246,14 +239,8 @@ var builtins = map[string]*object.Builtin{
 			if args[0].Type() != object.ARRAY_OBJ {
 				return newError("argument to `rest` must be ARRAY, got %s", args[0].Type())
 			}
-			arr := args[0].(*object.Array)
-			length := len(arr.Elements)
-			if length > 0 {
-				newElements := make([]object.Object, length-1, length-1)
-				object.DeepCopyArrayInto(newElements, arr.Elements[1:length])
-				return &object.Array{Elements: newElements}
-			}
-			return NULL
+
+			return arrRest(args[0].(*object.Array))
 		},
 	},
 	"init": {
@@ -264,14 +251,8 @@ var builtins = map[string]*object.Builtin{
 			if args[0].Type() != object.ARRAY_OBJ {
 				return newError("argument to `init` must be ARRAY, got %s", args[0].Type())
 			}
-			arr := args[0].(*object.Array)
-			length := len(arr.Elements)
-			if length > 0 {
-				newElements := make([]object.Object, length-1, length-1)
-				object.DeepCopyArrayInto(newElements, arr.Elements[:length-1])
-				return &object.Array{Elements: newElements}
-			}
-			return NULL
+
+			return arrInit(args[0].(*object.Array))
 		},
 	},
 	"at": {
@@ -285,17 +266,8 @@ var builtins = map[string]*object.Builtin{
 			if args[1].Type() != object.INTEGER_OBJ {
 				return newError("index to `at` must be INTEGER, got %s", args[1].Type())
 			}
-			arr := args[0].(*object.Array)
-			index := args[1].(*object.Integer).Value
-			if index < 0 {
-				index = int64(len(arr.Elements)) + index
-			}
 
-			length := len(arr.Elements)
-			if index < 0 || index > int64(length-1) {
-				return NULL
-			}
-			return object.DeepCopy(arr.Elements[index])
+			return arrAt(args[0].(*object.Array), args[1].(*object.Integer).Value)
 		},
 	},
 	"set_at": {
@@ -309,47 +281,8 @@ var builtins = map[string]*object.Builtin{
 			if args[1].Type() != object.INTEGER_OBJ {
 				return newError("index to `set_at` must be INTEGER, got %s", args[1].Type())
 			}
-			arr := args[0].(*object.Array)
-			index := args[1].(*object.Integer).Value
-			if index < 0 {
-				index = int64(len(arr.Elements)) + index
-			}
 
-			length := len(arr.Elements)
-			if index < 0 || index > int64(length-1) {
-				return NULL
-			}
-			retArr := &object.Array{Elements: make([]object.Object, length, length)}
-			object.DeepCopyArrayInto(retArr.Elements, arr.Elements)
-			retArr.Elements[index] = args[2]
-			return retArr
-		},
-	},
-	"del_at": {
-		Fn: func(args ...object.Object) object.Object {
-			if len(args) != 2 {
-				return newError("wrong number of arguments. got = %d, want = 2", len(args))
-			}
-			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `del_at` must be ARRAY, got %s", args[0].Type())
-			}
-			if args[1].Type() != object.INTEGER_OBJ {
-				return newError("index to `del_at` must be INTEGER, got %s", args[1].Type())
-			}
-			arr := args[0].(*object.Array)
-			index := args[1].(*object.Integer).Value
-			if index < 0 {
-				index = int64(len(arr.Elements)) + index
-			}
-
-			length := len(arr.Elements)
-			if index < 0 || index > int64(length-1) {
-				return NULL
-			}
-			newElements := make([]object.Object, length-1, length-1)
-			object.DeepCopyArrayInto(newElements, arr.Elements[:index])
-			object.DeepCopyArrayInto(newElements[index:], arr.Elements[index+1:])
-			return &object.Array{Elements: newElements}
+			return arrSetAt(args[0].(*object.Array), args[1].(*object.Integer).Value, args[2])
 		},
 	},
 	"push": {
@@ -360,12 +293,8 @@ var builtins = map[string]*object.Builtin{
 			if args[0].Type() != object.ARRAY_OBJ {
 				return newError("argument to `push` must be ARRAY, got %s", args[0].Type())
 			}
-			arr := args[0].(*object.Array)
-			length := len(arr.Elements)
-			newElements := make([]object.Object, length+1, length+1)
-			object.DeepCopyArrayInto(newElements, arr.Elements)
-			newElements[length] = args[1]
-			return &object.Array{Elements: newElements}
+
+			return arrPush(args[0].(*object.Array), args[1])
 		},
 	},
 	"pop": {
@@ -376,14 +305,8 @@ var builtins = map[string]*object.Builtin{
 			if args[0].Type() != object.ARRAY_OBJ {
 				return newError("argument to `pop` must be ARRAY, got %s", args[0].Type())
 			}
-			arr := args[0].(*object.Array)
-			length := len(arr.Elements)
-			if length > 0 {
-				newElements := make([]object.Object, length-1, length-1)
-				object.DeepCopyArrayInto(newElements, arr.Elements[0:length-1])
-				return &object.Array{Elements: newElements}
-			}
-			return NULL
+
+			return arrPop(args[0].(*object.Array))
 		},
 	},
 	"push_front": {
@@ -394,12 +317,8 @@ var builtins = map[string]*object.Builtin{
 			if args[0].Type() != object.ARRAY_OBJ {
 				return newError("argument to `push_front` must be ARRAY, got %s", args[0].Type())
 			}
-			arr := args[0].(*object.Array)
-			length := len(arr.Elements)
-			newElements := make([]object.Object, length+1, length+1)
-			object.DeepCopyArrayInto(newElements[1:], arr.Elements)
-			newElements[0] = args[1]
-			return &object.Array{Elements: newElements}
+
+			return arrPushFront(args[0].(*object.Array), args[1])
 		},
 	},
 	"pop_front": {
@@ -410,14 +329,8 @@ var builtins = map[string]*object.Builtin{
 			if args[0].Type() != object.ARRAY_OBJ {
 				return newError("argument to `pop_front` must be ARRAY, got %s", args[0].Type())
 			}
-			arr := args[0].(*object.Array)
-			length := len(arr.Elements)
-			if length > 0 {
-				newElements := make([]object.Object, length-1, length-1)
-				object.DeepCopyArrayInto(newElements, arr.Elements[1:length])
-				return &object.Array{Elements: newElements}
-			}
-			return NULL
+
+			return arrPopFront(args[0].(*object.Array))
 		},
 	},
 	"insert": {
@@ -428,20 +341,11 @@ var builtins = map[string]*object.Builtin{
 			if args[0].Type() != object.ARRAY_OBJ {
 				return newError("argument to `insert` must be ARRAY, got %s", args[0].Type())
 			}
-			arr := args[0].(*object.Array)
-			length := len(arr.Elements)
-			index, ok := args[1].(*object.Integer)
-			if !ok {
-				return newError("argument to `insert` must be INTEGER, got %s", args[1].Type())
+			if args[1].Type() != object.INTEGER_OBJ {
+				return newError("index to `insert` must be INTEGER, got %s", args[1].Type())
 			}
-			if index.Value < 0 || index.Value > int64(length) {
-				return newError("index out of range: %d", index.Value)
-			}
-			newElements := make([]object.Object, length+1, length+1)
-			object.DeepCopyArrayInto(newElements, arr.Elements[:index.Value])
-			newElements[index.Value] = args[2]
-			object.DeepCopyArrayInto(newElements[index.Value+1:], arr.Elements[index.Value:])
-			return &object.Array{Elements: newElements}
+
+			return arrInsert(args[0].(*object.Array), args[1].(*object.Integer).Value, args[2])
 		},
 	},
 	"remove": {
@@ -452,19 +356,11 @@ var builtins = map[string]*object.Builtin{
 			if args[0].Type() != object.ARRAY_OBJ {
 				return newError("argument to `remove` must be ARRAY, got %s", args[0].Type())
 			}
-			arr := args[0].(*object.Array)
-			length := len(arr.Elements)
-			index, ok := args[1].(*object.Integer)
-			if !ok {
-				return newError("argument to `remove` must be INTEGER, got %s", args[1].Type())
+			if args[1].Type() != object.INTEGER_OBJ {
+				return newError("index to `remove` must be INTEGER, got %s", args[1].Type())
 			}
-			if index.Value < 0 || index.Value >= int64(length) {
-				return newError("index out of range: %d", index.Value)
-			}
-			newElements := make([]object.Object, length-1, length-1)
-			object.DeepCopyArrayInto(newElements, arr.Elements[:index.Value])
-			object.DeepCopyArrayInto(newElements[index.Value:], arr.Elements[index.Value+1:])
-			return &object.Array{Elements: newElements}
+
+			return arrRemove(args[0].(*object.Array), args[1].(*object.Integer).Value)
 		},
 	},
 	"reverse": {
@@ -475,13 +371,8 @@ var builtins = map[string]*object.Builtin{
 			if args[0].Type() != object.ARRAY_OBJ {
 				return newError("argument to `reverse` must be ARRAY, got %s", args[0].Type())
 			}
-			arr := args[0].(*object.Array)
-			length := len(arr.Elements)
-			newElements := make([]object.Object, length, length)
-			for i := 0; i < length; i++ {
-				newElements[i] = object.DeepCopy(arr.Elements[length-i-1])
-			}
-			return &object.Array{Elements: newElements}
+
+			return arrReverse(args[0].(*object.Array))
 		},
 	},
 	// Hash functions
@@ -589,4 +480,149 @@ var builtins = map[string]*object.Builtin{
 			return retHash
 		},
 	},
+}
+
+// Array function implementations
+func arrFirst(arr *object.Array) object.Object {
+	if len(arr.Elements) > 0 {
+		return object.DeepCopy(arr.Elements[0])
+	}
+	return NULL
+}
+
+func arrLast(arr *object.Array) object.Object {
+	length := len(arr.Elements)
+	if length > 0 {
+		return object.DeepCopy(arr.Elements[length-1])
+	}
+	return NULL
+}
+
+func arrRest(arr *object.Array) object.Object {
+	length := len(arr.Elements)
+	if length > 0 {
+		newElements := make([]object.Object, length-1, length-1)
+		object.DeepCopyArrayInto(newElements, arr.Elements[1:length])
+		return &object.Array{Elements: newElements}
+	}
+	return NULL
+}
+
+func arrInit(arr *object.Array) object.Object {
+	length := len(arr.Elements)
+	if length > 0 {
+		newElements := make([]object.Object, length-1, length-1)
+		object.DeepCopyArrayInto(newElements, arr.Elements[0:length-1])
+		return &object.Array{Elements: newElements}
+	}
+	return NULL
+}
+
+func arrAt(arr *object.Array, index int64) object.Object {
+	if index < 0 {
+		index = int64(len(arr.Elements)) + index
+	}
+
+	length := len(arr.Elements)
+	if index < 0 || index > int64(length-1) {
+		return NULL
+	}
+	return object.DeepCopy(arr.Elements[index])
+}
+
+func arrSetAt(arr *object.Array, index int64, val object.Object) object.Object {
+	length := len(arr.Elements)
+
+	if index < 0 {
+		index = int64(length) + index
+	}
+
+	if index < 0 || index > int64(length-1) {
+		return newError("index out of range: %d", index)
+	}
+
+	retArr := &object.Array{Elements: make([]object.Object, length, length)}
+	object.DeepCopyArrayInto(retArr.Elements, arr.Elements)
+	retArr.Elements[index] = val
+	return retArr
+}
+
+func arrPush(arr *object.Array, val object.Object) object.Object {
+	length := len(arr.Elements)
+	newElements := make([]object.Object, length+1, length+1)
+	object.DeepCopyArrayInto(newElements, arr.Elements)
+	newElements[length] = val
+	return &object.Array{Elements: newElements}
+}
+
+func arrPop(arr *object.Array) object.Object {
+	length := len(arr.Elements)
+	if length > 0 {
+		newElements := make([]object.Object, length-1, length-1)
+		object.DeepCopyArrayInto(newElements, arr.Elements[0:length-1])
+		return &object.Array{Elements: newElements}
+	}
+	return NULL
+}
+
+func arrPushFront(arr *object.Array, val object.Object) object.Object {
+	length := len(arr.Elements)
+	newElements := make([]object.Object, length+1, length+1)
+	object.DeepCopyArrayInto(newElements[1:], arr.Elements)
+	newElements[0] = val
+	return &object.Array{Elements: newElements}
+}
+
+func arrPopFront(arr *object.Array) object.Object {
+	length := len(arr.Elements)
+	if length > 0 {
+		newElements := make([]object.Object, length-1, length-1)
+		object.DeepCopyArrayInto(newElements, arr.Elements[1:length])
+		return &object.Array{Elements: newElements}
+	}
+	return NULL
+}
+
+func arrInsert(arr *object.Array, index int64, val object.Object) object.Object {
+	length := len(arr.Elements)
+
+	if index < 0 {
+		index = int64(length) + index
+	}
+
+	if index < 0 || index > int64(length) {
+		return newError("index out of range: %d", index)
+	}
+
+	newElements := make([]object.Object, length+1, length+1)
+	object.DeepCopyArrayInto(newElements, arr.Elements[:index])
+	newElements[index] = val
+	object.DeepCopyArrayInto(newElements[index+1:], arr.Elements[index:])
+	return &object.Array{Elements: newElements}
+}
+
+func arrRemove(arr *object.Array, index int64) object.Object {
+	length := len(arr.Elements)
+
+	if index < 0 {
+		index = int64(length) + index
+	}
+
+	if index < 0 || index > int64(length-1) {
+		return newError("index out of range: %d", index)
+	}
+
+	newElements := make([]object.Object, length-1, length-1)
+	object.DeepCopyArrayInto(newElements, arr.Elements[:index])
+	object.DeepCopyArrayInto(newElements[index:], arr.Elements[index+1:])
+	return &object.Array{Elements: newElements}
+}
+
+func arrReverse(arr *object.Array) object.Object {
+	length := len(arr.Elements)
+	newElements := make([]object.Object, length, length)
+	for i, j := 0, length-1; i < length; i, j = i+1, j-1 {
+		newElements[i] = object.DeepCopy(arr.Elements[j])
+	}
+	return &object.Array{Elements: newElements}
 }

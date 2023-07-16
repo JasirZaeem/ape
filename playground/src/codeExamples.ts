@@ -68,11 +68,8 @@ print("at(arr, -2) == ", at(arr, -2));
 print();
 
 print("set_at(arr, 2, 10) == ", set_at(arr, 2, 10));
-print("set_at(arr, 10, 10) == ", set_at(arr, 10, 10));
 print("set_at(arr, -2, 10) == ", set_at(arr, -2, 10));
 print();
-
-print("del_at(arr, 2) == ", del_at(arr, 2));
 `;
 
 export const hashExamples = `let h = {"two": 2, "three": 3, "one": 1};
