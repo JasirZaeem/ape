@@ -5,6 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { useLocalState } from "@/hooks/useLocalState.ts";
 
 export enum Theme {
   System = "system",
@@ -39,13 +40,7 @@ export const ThemeProvider = ({
   defaultTheme = Theme.System,
   storageKey = "ape-theme",
 }: ThemeProviderProps) => {
-  const [theme, setTheme] = useState<Theme>(() => {
-    const storedTheme = window.localStorage.getItem(storageKey);
-    if (storedTheme && Object.values(Theme).includes(storedTheme as Theme)) {
-      return storedTheme as Theme;
-    }
-    return defaultTheme;
-  });
+  const [theme, setTheme] = useLocalState(defaultTheme, storageKey);
   const [effectiveTheme, setEffectiveTheme] = useState<EffectiveTheme>(
     Theme.Light
   );
@@ -92,10 +87,7 @@ export const ThemeProvider = ({
 
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme);
-      setTheme(theme);
-    },
+    setTheme,
     effectiveTheme,
   };
 
