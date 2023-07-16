@@ -22,8 +22,6 @@ type ExampleSelectorProps = {
   onSelectExample: (code: string) => void;
 };
 
-console.info("exampleNames", exampleNames);
-
 export function ExampleSelector({ onSelectExample }: ExampleSelectorProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState<string | null>(null);
