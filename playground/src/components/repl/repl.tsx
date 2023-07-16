@@ -80,7 +80,6 @@ function ReplHistoryItem({
 export function Repl() {
   const containerRef = useRef<HTMLDivElement>(null);
   const autoScroll = useRef(true);
-  const [replInput, setReplInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const history = useApeStore((state) => state.history);
   const { runCode } = useApe();
@@ -119,8 +118,17 @@ export function Repl() {
     // @ts-ignore
     const replCode = e.target["repl-code"].value as string;
     runCode(replCode, ApeCodeSource.REPL);
-    setReplInput("");
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
   };
+
+  function historyItemEditHandler(value: string) {
+    if (inputRef.current) {
+      inputRef.current.value = value;
+      inputRef.current?.focus();
+    }
+  }
 
   return (
     <div className="container py-1 flex flex-col max-w-full h-full overflow-auto w-full">
@@ -133,10 +141,7 @@ export function Repl() {
               key={id}
               {...item}
               onRunCode={(code) => runCode(code, ApeCodeSource.REPL)}
-              onEdit={() => {
-                setReplInput(item.value);
-                inputRef.current?.focus();
-              }}
+              onEdit={historyItemEditHandler}
             />
           ))}
           <code className="relative">
@@ -145,8 +150,6 @@ export function Repl() {
               <Input
                 className="inline w-full m-0 h-8 pl-10"
                 name="repl-code"
-                value={replInput}
-                onChange={(e) => setReplInput(e.target.value)}
                 ref={inputRef}
               />
             </form>
