@@ -50,8 +50,10 @@ async function getFromCompressedUrlHash<T>(defaultValue: T): Promise<T> {
 }
 
 async function setToCompressedUrlHash<T>(value: T) {
-  window.location.hash = await compressText(JSON.stringify(value));
-  return window.location.toString();
+  const compressed = await compressText(JSON.stringify(value));
+  const url = new URL(window.location.toString());
+  url.hash = compressed;
+  return url.toString();
 }
 
 export const useApeStore = create<State>((set, get) => {

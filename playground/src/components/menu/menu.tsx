@@ -48,13 +48,15 @@ const themeNames = {
 function MenuButton({
   children,
   toolTipContent,
+  openTooltip,
   ...props
 }: ButtonProps & {
   toolTipContent: ReactNode;
+  openTooltip?: boolean;
 }) {
   return (
     <TooltipProvider delayDuration={500}>
-      <Tooltip>
+      <Tooltip open={openTooltip}>
         <TooltipTrigger asChild>
           <Button variant="outline" size="icon" {...props}>
             {children}
@@ -140,7 +142,17 @@ const ShareButton = () => {
   }
 
   return (
-    <MenuButton toolTipContent="Share code" onClick={shareCodeHandler}>
+    <MenuButton
+      toolTipContent={
+        hasCopied ? (
+          <span className="text-green-500">Link Copied</span>
+        ) : (
+          "Share Code"
+        )
+      }
+      onClick={shareCodeHandler}
+      openTooltip={hasCopied ? true : undefined}
+    >
       {hasCopied ? <CheckIcon className="text-green-500" /> : <Share1Icon />}
     </MenuButton>
   );
