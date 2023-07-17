@@ -16,7 +16,7 @@ type ApeContextType = {
 
 const ApeContext = createContext<ApeContextType>({
   runCode: () => {},
-  formatCode: () => ({ type: "FORMATTED", value: "" }),
+  formatCode: () => ({ type: ApeResultType.FORMATTED, value: "" }),
   getAst: () => ({ type: ApeResultType.JSON_AST, value: {} }),
   resetApe: () => {},
 });
