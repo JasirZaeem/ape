@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/tooltip.tsx";
 import { ExampleSelector } from "@/components/menu/exampleSelector.tsx";
 import { ApeCodeSource, ApeResultType } from "@/hooks/useApe.ts";
-import { useApeStore } from "@/hooks/useApeStore.ts";
+import { useApeStore, useTransientApeStore } from "@/hooks/useApeStore.ts";
 import { useApe } from "@/apeContext.tsx";
 import { ReactNode } from "react";
 
@@ -67,13 +67,13 @@ function MenuButton({
 }
 
 function RunCodeButton() {
-  const code = useApeStore((state) => state.code);
+  const getCode = useTransientApeStore("code");
   const { runCode } = useApe();
 
   return (
     <MenuButton
       toolTipContent="Run Code"
-      onClick={() => runCode(code, ApeCodeSource.EDITOR)}
+      onClick={() => runCode(getCode(), ApeCodeSource.EDITOR)}
       variant="default"
       className="bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800"
     >
@@ -83,14 +83,14 @@ function RunCodeButton() {
 }
 
 function RunSelectedCodeButton() {
-  const selectedCode = useApeStore((state) => state.selectedCode);
+  const getSelectedCode = useTransientApeStore("selectedCode");
   const isCodeSelected = useApeStore((state) => state.isCodeSelected);
   const { runCode } = useApe();
 
   return (
     <MenuButton
       toolTipContent="Run selected code"
-      onClick={() => runCode(selectedCode, ApeCodeSource.EDITOR)}
+      onClick={() => runCode(getSelectedCode(), ApeCodeSource.EDITOR)}
       disabled={!isCodeSelected}
     >
       <CursorTextIcon />
@@ -99,18 +99,28 @@ function RunSelectedCodeButton() {
 }
 
 const FormatCodeButton = () => {
-  const code = useApeStore((state) => state.code);
+  const getCode = useTransientApeStore("code");
+  const setCode = useApeStore((state) => state.setCode);
+
   const { formatCode } = useApe();
 
   return (
-    <MenuButton toolTipContent="Format code" onClick={() => formatCode(code)}>
+    <MenuButton
+      toolTipContent="Format code"
+      onClick={() => {
+        const result = formatCode(getCode());
+        if (result.type === ApeResultType.FORMATTED) {
+          setCode(result.value);
+        }
+      }}
+    >
       <TextAlignLeftIcon />
     </MenuButton>
   );
 };
 
 const ToggleAstViewerButton = () => {
-  const code = useApeStore((state) => state.code);
+  const getCode = useTransientApeStore("code");
   const astViewerVisible = useApeStore((state) => state.astViewerVisible);
   const setAstViewerVisible = useApeStore((state) => state.setAstViewerVisible);
   const setAst = useApeStore((state) => state.setAst);
@@ -123,7 +133,7 @@ const ToggleAstViewerButton = () => {
     }
 
     setAstViewerVisible(true);
-    const result = getAst(code);
+    const result = getAst(getCode());
     if (result.type === ApeResultType.JSON_AST) {
       setAst(result.value);
     }
