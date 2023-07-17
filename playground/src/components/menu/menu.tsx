@@ -1,5 +1,6 @@
 import { Button, ButtonProps } from "@/components/ui/button.tsx";
 import {
+  CheckIcon,
   CursorTextIcon,
   DesktopIcon,
   EyeClosedIcon,
@@ -8,6 +9,7 @@ import {
   MoonIcon,
   PlayIcon,
   ResetIcon,
+  Share1Icon,
   SunIcon,
   TextAlignLeftIcon,
   TrashIcon,
@@ -29,7 +31,7 @@ import { ExampleSelector } from "@/components/menu/exampleSelector.tsx";
 import { ApeCodeSource, ApeResultType } from "@/hooks/useApe.ts";
 import { useApeStore, useTransientApeStore } from "@/hooks/useApeStore.ts";
 import { useApe } from "@/apeContext.tsx";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 const themeIcons = {
   [Theme.System]: DesktopIcon,
@@ -119,6 +121,31 @@ const FormatCodeButton = () => {
   );
 };
 
+const ShareButton = () => {
+  const setCodeToUrlHash = useApeStore((state) => state.setCodeToUrlHash);
+  const [hasCopied, setHasCopied] = useState(false);
+
+  useEffect(() => {
+    if (hasCopied) {
+      const timeout = setTimeout(() => setHasCopied(false), 1000);
+      return () => clearTimeout(timeout);
+    }
+  }, [hasCopied]);
+
+  function shareCodeHandler() {
+    setCodeToUrlHash().then((link) => {
+      navigator.clipboard.writeText(link);
+      setHasCopied(true);
+    });
+  }
+
+  return (
+    <MenuButton toolTipContent="Share code" onClick={shareCodeHandler}>
+      {hasCopied ? <CheckIcon className="text-green-500" /> : <Share1Icon />}
+    </MenuButton>
+  );
+};
+
 const ToggleAstViewerButton = () => {
   const getCode = useTransientApeStore("code");
   const astViewerVisible = useApeStore((state) => state.astViewerVisible);
@@ -140,20 +167,12 @@ const ToggleAstViewerButton = () => {
   }
 
   return (
-    <TooltipProvider delayDuration={500}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button onClick={getAstHandler} variant="outline" size="icon">
-            {astViewerVisible ? <EyeClosedIcon /> : <EyeOpenIcon />}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p className="text-center">
-            {astViewerVisible ? "Hide" : "Show"} AST
-          </p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <MenuButton
+      toolTipContent={astViewerVisible ? "Hide AST" : "Show AST"}
+      onClick={getAstHandler}
+    >
+      {astViewerVisible ? <EyeClosedIcon /> : <EyeOpenIcon />}
+    </MenuButton>
   );
 };
 
@@ -183,6 +202,7 @@ export function Menu() {
           <RunCodeButton />
           <RunSelectedCodeButton />
           <FormatCodeButton />
+          <ShareButton />
 
           <MenuButton
             toolTipContent={

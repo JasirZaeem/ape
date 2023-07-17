@@ -1,11 +1,12 @@
 import { create } from "zustand";
-import { helloWorld } from "@/codeExamples.ts";
 import { ApeInterpreterHistory } from "@/hooks/useApe.ts";
 import { useEffect, useRef } from "react";
+import { compressText, decompressText } from "@/lib/utils.ts";
 
 type State = {
   code: string;
   setCode: (code: string) => void;
+  setCodeToUrlHash: () => Promise<string>;
   selectedCode: string;
   isCodeSelected: boolean;
   setSelectedCode: (selectedCode: string) => void;
@@ -35,12 +36,33 @@ function setToLocalStorage<T>(key: string, value: T) {
   window.localStorage.setItem(key, JSON.stringify(value));
 }
 
+async function getFromCompressedUrlHash<T>(defaultValue: T): Promise<T> {
+  const value = window.location.hash.slice(1);
+  if (value === "") {
+    return defaultValue;
+  }
+  try {
+    const text = await decompressText(value);
+    return JSON.parse(text);
+  } catch (e) {
+    return defaultValue;
+  }
+}
+
+async function setToCompressedUrlHash<T>(value: T) {
+  window.location.hash = await compressText(JSON.stringify(value));
+  return window.location.toString();
+}
+
 export const useApeStore = create<State>((set, get) => {
   return {
-    code: getFromLocalStorage("code", helloWorld),
+    code: getFromLocalStorage("code", ""),
     setCode: (code: string) => {
       set({ code });
       setToLocalStorage("code", code);
+    },
+    setCodeToUrlHash: () => {
+      return setToCompressedUrlHash(get().code);
     },
     selectedCode: "",
     isCodeSelected: false,
@@ -61,6 +83,13 @@ export const useApeStore = create<State>((set, get) => {
       set({ history: newHistory });
     },
   };
+});
+
+// Load shared code from hash if present
+await getFromCompressedUrlHash("").then((code) => {
+  if (code !== "") {
+    useApeStore.setState({ code });
+  }
 });
 
 export function useTransientApeStore<T extends keyof State>(
