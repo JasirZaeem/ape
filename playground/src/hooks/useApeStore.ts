@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { helloWorld } from "@/codeExamples.ts";
 import { ApeInterpreterHistory } from "@/hooks/useApe.ts";
+import { useEffect, useRef } from "react";
 
 type State = {
   code: string;
@@ -61,3 +62,16 @@ export const useApeStore = create<State>((set, get) => {
     },
   };
 });
+
+export function useTransientApeStore<T extends keyof State>(
+  slice: T
+): () => State[T] {
+  const stateRef = useRef(useApeStore.getState()[slice]);
+
+  useEffect(
+    () => useApeStore.subscribe((state) => (stateRef.current = state[slice])),
+    []
+  );
+
+  return () => stateRef.current;
+}
