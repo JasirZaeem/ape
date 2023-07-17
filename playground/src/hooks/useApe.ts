@@ -41,7 +41,10 @@ export type ApeResult = {
 };
 
 export type FormatCodeResult = {
-  type: ApeResultType.PARSER_ERROR | ApeResultType.FORMATTED;
+  type:
+    | ApeResultType.PARSER_ERROR
+    | ApeResultType.FORMATTED
+    | ApeResultType.WASM_ERROR;
   value: string;
 };
 
@@ -51,7 +54,10 @@ export type GetAstResult =
       value: unknown;
     }
   | {
-      type: ApeResultType.JSON_ERROR | ApeResultType.PARSER_ERROR;
+      type:
+        | ApeResultType.JSON_ERROR
+        | ApeResultType.PARSER_ERROR
+        | ApeResultType.WASM_ERROR;
       value: string;
     };
 
@@ -107,8 +113,13 @@ export function useApeInterpreter() {
   }, []);
 
   return {
-    ready,
     runCode: (code: string, source: ApeCodeSource) => {
+      if (!ready) {
+        return {
+          type: ApeResultType.WASM_ERROR,
+          value: "Interpreter not ready",
+        };
+      }
       const order = NEXT_ORDER++;
       updateHistory((results) => [
         ...results,
@@ -129,6 +140,12 @@ export function useApeInterpreter() {
       return result;
     },
     formatCode: (code: string): FormatCodeResult => {
+      if (!ready) {
+        return {
+          type: ApeResultType.WASM_ERROR,
+          value: "Interpreter not ready",
+        };
+      }
       // formatApeCode global function is injected by Go
       // @ts-ignore
       const res = formatApeProgram(code);
@@ -142,6 +159,12 @@ export function useApeInterpreter() {
       return res;
     },
     getAst: (code: string, logErrors: boolean = false): GetAstResult => {
+      if (!ready) {
+        return {
+          type: ApeResultType.WASM_ERROR,
+          value: "Interpreter not ready",
+        };
+      }
       // getApesAst global function is injected by Go
       // @ts-ignore
       const res = getApeAst(code);
