@@ -88,7 +88,7 @@ export const useApeStore = create<State>((set, get) => {
 });
 
 // Load shared code from hash if present
-await getFromCompressedUrlHash("").then((code) => {
+getFromCompressedUrlHash("").then((code) => {
   if (code !== "") {
     useApeStore.setState({ code });
   }
