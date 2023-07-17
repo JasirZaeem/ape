@@ -15,7 +15,15 @@ import (
 // global environment
 var env *object.Environment
 
-func Run(this js.Value, args []js.Value) interface{} {
+func Run(this js.Value, args []js.Value) (ret interface{}) {
+	defer func() {
+		if r := recover(); r != nil {
+			ret = map[string]interface{}{
+				"type":  "WASM_ERROR",
+				"value": fmt.Sprintf("%v", r),
+			}
+		}
+	}()
 	// ensure only one argument is passed
 	if len(args) != 1 {
 		return map[string]interface{}{
@@ -63,7 +71,15 @@ func Reset(this js.Value, args []js.Value) interface{} {
 	return nil
 }
 
-func Format(this js.Value, args []js.Value) interface{} {
+func Format(this js.Value, args []js.Value) (ret interface{}) {
+	defer func() {
+		if r := recover(); r != nil {
+			ret = map[string]interface{}{
+				"type":  "WASM_ERROR",
+				"value": fmt.Sprintf("%v", r),
+			}
+		}
+	}()
 	if len(args) != 1 {
 		return fmt.Sprintf("wrong number of arguments. got = %d, want = 1", len(args))
 	}
@@ -88,7 +104,15 @@ func Format(this js.Value, args []js.Value) interface{} {
 	}
 }
 
-func JsonAst(this js.Value, args []js.Value) interface{} {
+func JsonAst(this js.Value, args []js.Value) (ret interface{}) {
+	defer func() {
+		if r := recover(); r != nil {
+			ret = map[string]interface{}{
+				"type":  "WASM_ERROR",
+				"value": fmt.Sprintf("%v", r),
+			}
+		}
+	}()
 	if len(args) != 1 {
 		return fmt.Sprintf("wrong number of arguments. got = %d, want = 1", len(args))
 	}
