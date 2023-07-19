@@ -3,7 +3,7 @@ package repl
 import (
 	"bufio"
 	"fmt"
-	"github.com/JasirZaeem/ape/evaluator"
+	"github.com/JasirZaeem/ape/pkg/evaluator"
 	"github.com/JasirZaeem/ape/pkg/object"
 	"github.com/JasirZaeem/ape/pkg/parser"
 	"io"

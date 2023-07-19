@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/JasirZaeem/ape/evaluator"
+	"github.com/JasirZaeem/ape/pkg/evaluator"
 	"github.com/JasirZaeem/ape/pkg/format"
 	"github.com/JasirZaeem/ape/pkg/lexer"
 	"github.com/JasirZaeem/ape/pkg/object"
