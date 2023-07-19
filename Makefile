@@ -1,11 +1,14 @@
 BINARY_NAME=ape
 
 build:
-	go build -o $(BINARY_NAME) ./cmd/ape/main.go
-	GOOS=js GOARCH=wasm go build -o ./playground/public/$(BINARY_NAME).wasm ./cmd/wasm/main.go
+	go build -trimpath -o $(BINARY_NAME) ./cmd/ape/main.go
+	GOOS=js GOARCH=wasm go build -trimpath -o ./playground/public/$(BINARY_NAME).wasm ./cmd/wasm/main.go
 
-build-wasm:
-	GOOS=js GOARCH=wasm go build -o ./playground/public/$(BINARY_NAME).wasm ./cmd/wasm/main.go
+wasm:
+	GOOS=js GOARCH=wasm go build -trimpath -o ./playground/public/$(BINARY_NAME).wasm ./cmd/wasm/main.go
+
+repl:
+	go build -trimpath -o $(BINARY_NAME) ./cmd/ape/main.go
 
 run:
 	go run ./cmd/ape/main.go
