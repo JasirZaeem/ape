@@ -3,6 +3,7 @@ package lexer
 import (
 	"bytes"
 	"github.com/JasirZaeem/ape/pkg/token"
+	"strings"
 )
 
 type Lexer struct {
@@ -13,7 +14,7 @@ type Lexer struct {
 }
 
 func New(input string) *Lexer {
-	l := &Lexer{input: input}
+	l := &Lexer{input: strings.TrimSpace(input)}
 	l.readChar()
 	return l
 }
@@ -65,14 +66,60 @@ func (l *Lexer) NextToken() token.Token {
 		} else {
 			tok = newToken(token.BANG, l.ch)
 		}
+	case '~':
+		tok = newToken(token.BIT_NOT, l.ch)
+	case '&':
+		if l.peekChar() == '&' {
+			l.readChar()
+			tok = token.Token{Type: token.AND, Literal: "&&"}
+		} else {
+			tok = newToken(token.BIT_AND, l.ch)
+		}
+	case '^':
+		tok = newToken(token.BIT_XOR, l.ch)
+	case '|':
+		if l.peekChar() == '|' {
+			l.readChar()
+			tok = token.Token{Type: token.OR, Literal: "||"}
+		} else {
+			tok = newToken(token.BIT_OR, l.ch)
+		}
 	case '/':
-		tok = newToken(token.SLASH, l.ch)
+		if l.peekChar() == '/' {
+			l.readChar()
+			tok = token.Token{Type: token.DOUBLE_SLASH, Literal: "//"}
+		} else {
+			tok = newToken(token.SLASH, l.ch)
+		}
+	case '%':
+		tok = newToken(token.MODULO, l.ch)
 	case '*':
-		tok = newToken(token.ASTERISK, l.ch)
+		if l.peekChar() == '*' {
+			l.readChar()
+			tok = token.Token{Type: token.EXPONENT, Literal: "**"}
+		} else {
+			tok = newToken(token.ASTERISK, l.ch)
+		}
 	case '<':
-		tok = newToken(token.LT, l.ch)
+		if l.peekChar() == '=' {
+			l.readChar()
+			tok = token.Token{Type: token.LTE, Literal: "<="}
+		} else if l.peekChar() == '<' {
+			l.readChar()
+			tok = token.Token{Type: token.LEFT_SHIFT, Literal: "<<"}
+		} else {
+			tok = newToken(token.LT, l.ch)
+		}
 	case '>':
-		tok = newToken(token.GT, l.ch)
+		if l.peekChar() == '=' {
+			l.readChar()
+			tok = token.Token{Type: token.GTE, Literal: ">="}
+		} else if l.peekChar() == '>' {
+			l.readChar()
+			tok = token.Token{Type: token.RIGHT_SHIFT, Literal: ">>"}
+		} else {
+			tok = newToken(token.GT, l.ch)
+		}
 	case ';':
 		tok = newToken(token.SEMICOLON, l.ch)
 	case '(':
@@ -96,6 +143,14 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.RBRACKET, l.ch)
 	case ':':
 		tok = newToken(token.COLON, l.ch)
+	case '\n':
+		l.readChar()
+		l.skipWhitespace()
+		if l.ch == '\n' {
+			return newToken(token.EMPTY_LINE, l.ch)
+		} else {
+			return l.NextToken()
+		}
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
@@ -155,7 +210,7 @@ func isDigit(ch byte) bool {
 }
 
 func (l *Lexer) skipWhitespace() {
-	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
+	for l.ch == ' ' || l.ch == '\t' {
 		l.readChar()
 	}
 }

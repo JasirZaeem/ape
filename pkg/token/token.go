@@ -16,15 +16,29 @@ const (
 	FLOAT  = "FLOAT"
 	STRING = "STRING"
 
-	ASSIGN   = "="
-	PLUS     = "+"
-	MINUS    = "-"
-	BANG     = "!"
-	ASTERISK = "*"
-	SLASH    = "/"
+	ASSIGN       = "="
+	PLUS         = "+"
+	MINUS        = "-"
+	BANG         = "!"
+	AND          = "&&"
+	OR           = "||"
+	ASTERISK     = "*"
+	SLASH        = "/"
+	MODULO       = "%"
+	DOUBLE_SLASH = "//"
+	EXPONENT     = "**"
+
+	BIT_NOT     = "~"
+	LEFT_SHIFT  = "<<"
+	RIGHT_SHIFT = ">>"
+	BIT_AND     = "&"
+	BIT_XOR     = "^"
+	BIT_OR      = "|"
 
 	LT     = "<"
+	LTE    = "<="
 	GT     = ">"
+	GTE    = ">="
 	EQ     = "=="
 	NOT_EQ = "!="
 
@@ -45,7 +59,10 @@ const (
 	FALSE    = "FALSE"
 	IF       = "IF"
 	ELSE     = "ELSE"
+	WHILE    = "WHILE"
 	RETURN   = "RETURN"
+
+	EMPTY_LINE = "EMPTY_LINE"
 )
 
 var keywords = map[string]TokenType{
@@ -55,6 +72,7 @@ var keywords = map[string]TokenType{
 	"false":  FALSE,
 	"if":     IF,
 	"else":   ELSE,
+	"while":  WHILE,
 	"return": RETURN,
 }
 

@@ -189,3 +189,42 @@ func (h *Hash) Inspect() string {
 
 	return out.String()
 }
+
+func DeepCopy(obj Object) Object {
+	switch obj.(type) {
+	case *Array:
+		return DeepCopyArray(obj.(*Array))
+	case *Hash:
+		return DeepCopyHash(obj.(*Hash))
+	default:
+		return obj
+	}
+}
+
+func DeepCopyArray(arr *Array) *Array {
+	var elements []Object
+	for _, e := range arr.Elements {
+		elements = append(elements, DeepCopy(e))
+	}
+
+	return &Array{Elements: elements}
+}
+
+func DeepCopyArrayInto(dst, src []Object) {
+	for i, e := range src {
+		dst[i] = DeepCopy(e)
+	}
+}
+
+func DeepCopyHash(hash *Hash) *Hash {
+	pairs := make(map[HashKey]HashPair)
+
+	for k, v := range hash.Pairs {
+		pairs[k] = HashPair{
+			Key:   DeepCopy(v.Key),
+			Value: DeepCopy(v.Value),
+		}
+	}
+
+	return &Hash{Pairs: pairs}
+}

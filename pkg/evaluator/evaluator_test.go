@@ -1,9 +1,9 @@
 package evaluator_test
 
 import (
-	"github.com/JasirZaeem/ape/evaluator"
-	"github.com/JasirZaeem/ape/object"
+	"github.com/JasirZaeem/ape/pkg/evaluator"
 	"github.com/JasirZaeem/ape/pkg/lexer"
+	"github.com/JasirZaeem/ape/pkg/object"
 	"github.com/JasirZaeem/ape/pkg/parser"
 	"testing"
 )
@@ -459,7 +459,7 @@ func TestArrayIndexExpressions(t *testing.T) {
 		},
 		{
 			"[1, 2, 3][-1]",
-			nil,
+			3,
 		},
 	}
 

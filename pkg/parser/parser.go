@@ -27,26 +27,47 @@ type Parser struct {
 const (
 	_ int = iota
 	LOWEST
+	ASSIGN
+	OR
+	AND
 	EQUALS
 	LESSGREATER
+	BIT_OR
+	BIT_XOR
+	BIT_AND
+	SHIFTS
 	SUM
 	PRODUCT
 	PREFIX
+	EXPONENTIATION
 	CALL
 	INDEX
 )
 
 var precedences = map[token.TokenType]int{
-	token.EQ:       EQUALS,
-	token.NOT_EQ:   EQUALS,
-	token.LT:       LESSGREATER,
-	token.GT:       LESSGREATER,
-	token.PLUS:     SUM,
-	token.MINUS:    SUM,
-	token.SLASH:    PRODUCT,
-	token.ASTERISK: PRODUCT,
-	token.LPAREN:   CALL,
-	token.LBRACKET: INDEX,
+	token.ASSIGN:       ASSIGN,
+	token.EQ:           EQUALS,
+	token.NOT_EQ:       EQUALS,
+	token.LEFT_SHIFT:   SHIFTS,
+	token.RIGHT_SHIFT:  SHIFTS,
+	token.BIT_AND:      BIT_AND,
+	token.BIT_XOR:      BIT_XOR,
+	token.BIT_OR:       BIT_OR,
+	token.LT:           LESSGREATER,
+	token.LTE:          LESSGREATER,
+	token.GT:           LESSGREATER,
+	token.GTE:          LESSGREATER,
+	token.AND:          AND,
+	token.OR:           OR,
+	token.PLUS:         SUM,
+	token.MINUS:        SUM,
+	token.SLASH:        PRODUCT,
+	token.DOUBLE_SLASH: PRODUCT,
+	token.ASTERISK:     PRODUCT,
+	token.MODULO:       PRODUCT,
+	token.EXPONENT:     EXPONENTIATION,
+	token.LPAREN:       CALL,
+	token.LBRACKET:     INDEX,
 }
 
 func New(l *lexer.Lexer) *Parser {
@@ -61,7 +82,10 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.LPAREN, p.parseGroupedExpression)
 	p.registerPrefix(token.BANG, p.parsePrefixExpression)
 	p.registerPrefix(token.MINUS, p.parsePrefixExpression)
+	p.registerPrefix(token.PLUS, p.parsePrefixExpression)
+	p.registerPrefix(token.BIT_NOT, p.parsePrefixExpression)
 	p.registerPrefix(token.IF, p.parseIfExpression)
+	p.registerPrefix(token.WHILE, p.parseWhileExpression)
 	p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
 	p.registerPrefix(token.STRING, p.parseStringLiteral)
 	p.registerPrefix(token.LBRACKET, p.parseArrayLiteral)
@@ -69,14 +93,27 @@ func New(l *lexer.Lexer) *Parser {
 
 	p.infixParseFns = map[token.TokenType]infixParseFn{}
 	p.registerInfix(token.LPAREN, p.parseCallExpression)
+	p.registerInfix(token.ASSIGN, p.parseInfixExpression)
 	p.registerInfix(token.PLUS, p.parseInfixExpression)
 	p.registerInfix(token.MINUS, p.parseInfixExpression)
 	p.registerInfix(token.SLASH, p.parseInfixExpression)
+	p.registerInfix(token.MODULO, p.parseInfixExpression)
+	p.registerInfix(token.DOUBLE_SLASH, p.parseInfixExpression)
 	p.registerInfix(token.ASTERISK, p.parseInfixExpression)
+	p.registerInfix(token.EXPONENT, p.parseInfixExpression)
+	p.registerInfix(token.LEFT_SHIFT, p.parseInfixExpression)
+	p.registerInfix(token.RIGHT_SHIFT, p.parseInfixExpression)
+	p.registerInfix(token.BIT_AND, p.parseInfixExpression)
+	p.registerInfix(token.BIT_XOR, p.parseInfixExpression)
+	p.registerInfix(token.BIT_OR, p.parseInfixExpression)
 	p.registerInfix(token.EQ, p.parseInfixExpression)
 	p.registerInfix(token.NOT_EQ, p.parseInfixExpression)
 	p.registerInfix(token.LT, p.parseInfixExpression)
+	p.registerInfix(token.LTE, p.parseInfixExpression)
 	p.registerInfix(token.GT, p.parseInfixExpression)
+	p.registerInfix(token.GTE, p.parseInfixExpression)
+	p.registerInfix(token.AND, p.parseInfixExpression)
+	p.registerInfix(token.OR, p.parseInfixExpression)
 	p.registerInfix(token.LBRACKET, p.parseIndexExpression)
 
 	// Populate current token and peek token
@@ -120,6 +157,8 @@ func (p *Parser) parseStatement() ast.Statement {
 		return p.parseLetStatement()
 	case token.RETURN:
 		return p.parseReturnStatement()
+	case token.EMPTY_LINE:
+		return p.parseEmptyStatement()
 	default:
 		return p.parseExpressionStatement()
 	}
@@ -192,6 +231,13 @@ func (p *Parser) parseBlockStatement() *ast.BlockStatement {
 	}
 
 	return block
+}
+
+func (p *Parser) parseEmptyStatement() *ast.EmptyStatement {
+	for p.peekTokenIs(token.EMPTY_LINE) {
+		p.nextToken()
+	}
+	return &ast.EmptyStatement{Token: p.curToken}
 }
 
 func (p *Parser) parseExpression(precedence int) ast.Expression {
@@ -315,6 +361,29 @@ func (p *Parser) parseIfExpression() ast.Expression {
 
 		expression.Alternative = p.parseBlockStatement()
 	}
+
+	return expression
+}
+
+func (p *Parser) parseWhileExpression() ast.Expression {
+	expression := &ast.WhileExpression{Token: p.curToken}
+
+	if !p.expectPeek(token.LPAREN) {
+		return nil
+	}
+
+	p.nextToken()
+	expression.Condition = p.parseExpression(LOWEST)
+
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+
+	if !p.expectPeek(token.LBRACE) {
+		return nil
+	}
+
+	expression.Body = p.parseBlockStatement()
 
 	return expression
 }
