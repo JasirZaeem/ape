@@ -1,12 +1,15 @@
 # Ape Lang
 
-C like, interpreted language written Go. Based on [Monkey Lang](https://monkeylang.org/)
+C like, interpreted language written in Go. Based on [Monkey Lang](https://monkeylang.org/)
 from the book [Writing an Interpreter in Go](https://interpreterbook.com/)
 with various changes and additions, and an in browser playground with the interpreter
 compiled to WASM.
 
 Try it out [here](https://zaeem.dev/ape) zaeem.dev/ape in the web playground with a syntax highlighted editor, ast
 viewer, interactive repl and a code formatter.
+
+![In browser playground](./docs/assets/playground.png)
+*In browser playground*
 
 Or compile it yourself and run the repl locally.
 
@@ -19,6 +22,9 @@ make repl
 # Run
 ./ape
 ```
+
+![Repl](./docs/assets/repl.png)
+*Repl*
 
 Or run the wasm playground locally.
 
