@@ -1,7 +1,7 @@
 package object_test
 
 import (
-	"github.com/JasirZaeem/ape/object"
+	"github.com/JasirZaeem/ape/pkg/object"
 	"testing"
 )
 

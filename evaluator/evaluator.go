@@ -2,8 +2,8 @@ package evaluator
 
 import (
 	"fmt"
-	"github.com/JasirZaeem/ape/object"
 	"github.com/JasirZaeem/ape/pkg/ast"
+	"github.com/JasirZaeem/ape/pkg/object"
 	"math"
 )
 

@@ -2,8 +2,8 @@ package evaluator_test
 
 import (
 	"github.com/JasirZaeem/ape/evaluator"
-	"github.com/JasirZaeem/ape/object"
 	"github.com/JasirZaeem/ape/pkg/lexer"
+	"github.com/JasirZaeem/ape/pkg/object"
 	"github.com/JasirZaeem/ape/pkg/parser"
 	"testing"
 )

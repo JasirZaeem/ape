@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/JasirZaeem/ape/evaluator"
-	"github.com/JasirZaeem/ape/object"
+	"github.com/JasirZaeem/ape/pkg/object"
 	"github.com/JasirZaeem/ape/pkg/parser"
 	"io"
 
