@@ -8,6 +8,9 @@ compiled to WASM.
 Try it out [here](https://zaeem.dev/ape) zaeem.dev/ape in the web playground with a syntax highlighted editor, ast
 viewer, interactive repl and a code formatter.
 
+![In browser playground](./docs/assets/playground.png)
+*In browser playground*
+
 Or compile it yourself and run the repl locally.
 
 ```bash
@@ -19,6 +22,9 @@ make repl
 # Run
 ./ape
 ```
+
+![Repl](./docs/assets/repl.png)
+*Repl*
 
 Or run the wasm playground locally.
 
