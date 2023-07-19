@@ -41,33 +41,40 @@ yarn
 # Start the dev server
 yarn dev
 ```
+
 And visit the url shown by vite in the terminal.
 
 ## The Language
 
 C like and based around expressions. Check out some examples, more examples are available in the playground.
 
-#### Hello World
+#### [Hello World](https://www.zaeem.dev/ape/#H4sIAAAAAAAAE1MqKMrMK9GIUfJIzcnJVwjPL8pJUYxR0rSOyVMCACCMqsscAAAA)
+
+The classic hello world program.
 
 ```ape
 print("Hello World!");
 ```
 
-#### Fibonacci
+#### [Fibonacci](https://www.zaeem.dev/ape/#H4sIAAAAAAAAE1PKSS1RSMtMUrBVSMvTqNBUqI7JU1DITFPQqFCwUTCC8hUUKqxBdK1Cak5xKkwMqA2oSlfBUFNBG84x0oSoBJIgHJNXUJSZV6IBkjY00ARJKgEAjBkjo3QAAAA=)
+
+Calculate the nth fibonacci number.
 
 ```ape
 let fib = fn(x) {
-    if (x < 2) {
-        x;
-    } else {
-        fib(x - 1) + fib(x - 2);
-    }
+  if (x < 2) {
+    x;
+  } else {
+    fib(x - 1) + fib(x - 2);
+  };
 };
 
 print(fib(10));
 ```
 
-#### Map
+#### [Map](https://www.zaeem.dev/ape/#H4sIAAAAAAAAE01QSw6CMBC9ygurYrpQdEd6EmRRYRqbFCSlTUiMd7c/kS5mkveZedPKkMMkFwiomUlrOVSN930GIqMd2QMlh8FP3khHYxEBWoEZSoIaQuC8Mzjq24x9QGalvyIuYJZWl/wci1+f7GALcZjStvDh/eakHmvsaUpK2PVRkfF4gAzpuwtHw3HluPVthseXfxjKl20l8IYTmt28WD07Fn6GSV7kaXn1BQyM0OoyAQAA)
+
+Transform an array by applying a function to each element.
 
 ```ape
 let map = fn(arr, f) {
@@ -83,12 +90,16 @@ let map = fn(arr, f) {
 };
 
 let a = [1, 2, 3, 4];
-let double = fn(x) { x * 2; };
+let double = fn(x) {
+  x * 2;
+};
 
 print(map(a, double));
 ```
 
-#### Pop count (Hamming Weight)
+#### [Pop count (Hamming Weight)](https://www.zaeem.dev/ape/#H4sIAAAAAAAAEz3OQQrCMBCF4as8u5AEEZraRkvxJgUXErFQXkNIcVF6dyemdpEZ+OZfpBhdhJ/84znNjLjjRUWNpSeQTn8uuySf9zA6KOIgslXYm7xPMF12ihFHeefN1t8MLs6BORdI2NOHgVHtP1HW1LfW1LY11cU25lqVjdZSFl8is5ULsgAAAA==)
+
+Count the number of set bits in a number.
 
 ```ape
 let pop_count = fn(n) {
@@ -251,7 +262,8 @@ let a = [1, 2, 3];
 
 ##### Hash
 
-A hash is an unordered collection of key-value pairs. Keys can be any type, values can be any type. Hashes are immmutable.
+A hash is an unordered collection of key-value pairs. Keys can be any type, values can be any type. Hashes are
+immmutable.
 `{ <expression>: <expression>, <expression>: <expression>, ... }`
 
 ```ape
