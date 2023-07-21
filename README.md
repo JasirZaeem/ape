@@ -1,6 +1,6 @@
 # Ape Lang
 
-C like, interpreted language written Go. Based on [Monkey Lang](https://monkeylang.org/)
+C like, interpreted language written in Go. Based on [Monkey Lang](https://monkeylang.org/)
 from the book [Writing an Interpreter in Go](https://interpreterbook.com/)
 with various changes and additions, and an in browser playground with the interpreter
 compiled to WASM.
